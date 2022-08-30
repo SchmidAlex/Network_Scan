@@ -21,7 +21,7 @@ def run_command(command):
     return output
  
 
-def enum(ip, ports, max_rate, speed, directory):
+def enum(ip, ports, max_rate, speed, directory, nmapPorts, nmapUPorts):
     # Running masscan
     cmd = ["sudo", "touch", directory+"masscan_result.txt"]
     output = run_command(cmd)
@@ -48,6 +48,10 @@ def enum(ip, ports, max_rate, speed, directory):
     cmd = ["sudo", "touch", directory+"nmap_result_udp.txt"]
     output = run_command(cmd)
 
+    # ↓ would be the correct way to approve masscans result
+    # cmd = ["sudo", "nmap", "-sV", "-p", nmapPorts, ip, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+
+    # ↓ is a faster way to confirm masscans result
     if resultsTCP:
         tcp_ports = list({int(port) for port in resultsTCP})
         tcp_ports.sort()
@@ -61,7 +65,10 @@ def enum(ip, ports, max_rate, speed, directory):
         outfile.flush()
         outfile.close()
 
-    # Get discovered UDP ports from the masscan output, sort them and run nmap for those
+    # ↓ would be the correct way to approve masscans result
+    # cmd = ["sudo", "nmap", "-sV", "-p", nmapUPorts, ip, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+
+    # ↓ is a faster way to confirm masscans result
     if resultsUDP:
         udp_ports = list({int(port) for port in resultsUDP})
         udp_ports.sort()
@@ -110,7 +117,7 @@ def main():
     if udp:
         ports += "U:" + args.udp_ports
         
-    enum(args.IP, ports, args.max_rate, args.delay, args.directory)
+    enum(args.IP, ports, args.max_rate, args.delay, args.directory, args.tcp_ports, args.udp_ports)
         
     
 if __name__ == "__main__":
