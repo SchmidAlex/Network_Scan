@@ -102,6 +102,17 @@ def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
 
 
 def main():
+
+    if not os.path.exists("/Network_Scan"):
+        os.mkdir("/Network_Scan")
+        cmd = ["sudo", "git", "clone", "https://github.com/SchmidAlex/Network_Scan", "/Network_Scan"]
+        run_command(cmd)
+    else:
+        cmd = ["sudo", "cd", "/Network_Scan"]
+        run_command(cmd)
+        cmd = ["sudo", "git", "pull"]
+        run_command(cmd)
+
     stamp = datetime.now()
 
     timestamp = stamp.strftime("%d_%m_%Y--%H_%M_%S/")
@@ -135,6 +146,7 @@ def main():
         cmd = ["sudo", "cd", "/testssl"]
         run_command(cmd)
         cmd = ["sudo", "git", "pull"]
+        run_command(cmd)
 
     if "," in args.IP:
         ipNmap = re.sub(",", " ", args.IP)
