@@ -4,6 +4,8 @@ import argparse
 import re
 import subprocess
 import sys
+import os
+from datetime import datetime
 
 
 def run_command(command):
@@ -21,7 +23,7 @@ def run_command(command):
     return output
  
 
-def enum(ip, ports, max_rate, speed, directory, nmapPorts, nmapUPorts):
+def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
     # Running masscan
     cmd = ["sudo", "touch", directory+"masscan_result.txt"]
     output = run_command(cmd)
@@ -49,42 +51,45 @@ def enum(ip, ports, max_rate, speed, directory, nmapPorts, nmapUPorts):
     output = run_command(cmd)
 
     # ↓ would be the correct way to approve masscans result
-    # cmd = ["sudo", "nmap", "-sV", "-p", nmapPorts, ip, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+    cmd = ["sudo", "nmap", "-sV", "-p", nmapPorts, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ipNmap]
+    #run_command(cmd)
+    subprocess.run(cmd,shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     # ↓ is a faster way to confirm masscans result
-    if resultsTCP:
-        tcp_ports = list({int(port) for port in resultsTCP})
-        tcp_ports.sort()
-        tcp_ports = ''.join(str(tcp_ports)[1:-1].split())
-        # Running nmap
-        cmd = ["sudo", "nmap", "-sV", "-p", tcp_ports, ip, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
-        output = run_command(cmd)
-    else:
-        outfile = open(directory+"nmap_result_tcp.txt", "at")
-        outfile.write("Because we didnt got any TCP-results in masscan, we wont do an nmap on TCP-ports")
-        outfile.flush()
-        outfile.close()
+    #if resultsTCP:
+    #    tcp_ports = list({int(port) for port in resultsTCP})
+    #    tcp_ports.sort()
+    #    tcp_ports = ''.join(str(tcp_ports)[1:-1].split())
+    #    # Running nmap
+    #    cmd = ["sudo", "nmap", "-sV", "-p", tcp_ports, str(ipNmap), "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+    #    output = run_command(cmd)
+    #else:
+    #    outfile = open(directory+"nmap_result_tcp.txt", "at")
+    #    outfile.write("Because we didnt got any TCP-results in masscan, we wont do an nmap on TCP-ports")
+    #    outfile.flush()
+    #    outfile.close()
 
     # ↓ would be the correct way to approve masscans result
-    # cmd = ["sudo", "nmap", "-sV", "-p", nmapUPorts, ip, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+    #cmd = ["sudo", "nmap", "-sV", "-p", nmapUPorts, ipNmap, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+    #run_command(cmd)
 
     # ↓ is a faster way to confirm masscans result
-    if resultsUDP:
-        udp_ports = list({int(port) for port in resultsUDP})
-        udp_ports.sort()
-        udp_ports = ''.join(str(udp_ports)[1:-1].split())
-        # Running nmap
-        cmd = ["sudo", "nmap", "-sV", "-sU", "-p", udp_ports, ip, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt"]
-        output = run_command(cmd)
-    else:
-        outfile = open(directory+"nmap_result_udp.txt", "at")
-        outfile.write("Because we didnt got any UDP-results in masscan, we wont do an nmap on UDP-ports")
-        outfile.flush()
-        outfile.close()
+    #if resultsUDP:
+    #    udp_ports = list({int(port) for port in resultsUDP})
+    #    udp_ports.sort()
+    #    udp_ports = ''.join(str(udp_ports)[1:-1].split())
+    #    # Running nmap
+    #    cmd = ["sudo", "nmap", "-sV", "-sU", "-p", udp_ports, ipNmap, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt"]
+    #    output = run_command(cmd)
+    #else:
+    #    outfile = open(directory+"nmap_result_udp.txt", "at")
+    #    outfile.write("Because we didnt got any UDP-results in masscan, we wont do an nmap on UDP-ports")
+    #    outfile.flush()
+    #    outfile.close()
 
     # Test all scanned and open tcp-ports nmap found with testssl
     if resultsTCP:
-        cmd = ["sudo", "testssl", "--file", directory+"nmap_result_fortestssl.txt", "-oL", directory+"testssl_result.txt"]
+        cmd = ["sudo", "/testssl/testssl.sh", "--file", directory+"nmap_result_fortestssl.txt", "-oL", directory+"testssl_result.txt"]
         output = run_command(cmd)
     else:
         cmd = ["sudo", "touch", directory+"testssl_result.txt"]
@@ -97,15 +102,59 @@ def enum(ip, ports, max_rate, speed, directory, nmapPorts, nmapUPorts):
 
 
 def main():
+    stamp = datetime.now()
+
+    timestamp = stamp.strftime("%d_%m_%Y--%H_%M_%S/")
+
     parser = argparse.ArgumentParser(description="Port/Service enumaration tool.")
     parser.add_argument("IP",  help="IP address to scan.")
     parser.add_argument("-tp", "--tcp-ports", dest="tcp_ports", default="1-65535", help="List of ports/port ranges to scan (TCP only).")
     parser.add_argument("-up", "--udp-ports", dest="udp_ports", default="1-65535", help="List of ports/port ranges to scan (UDP only).")
-    parser.add_argument("-r", "--max-rate", dest="max_rate", default=500, type=int, help="Send packets no faster than <number> per second")
-    parser.add_argument("-T", "--delay", dest="delay", default=3, type=int, help="Set Delay 0 - 5 (slow - fast)")
-    parser.add_argument("-o", "--output", dest="directory", default="", help="Directory to write output to.")
+    parser.add_argument("-r", "--max-rate", dest="max_rate", default=500, type=int, help="Send massscan packets no faster than <number> per second")
+    parser.add_argument("-T", "--delay", dest="delay", default=3, type=int, help="Set nmap delay 0 - 5 (slow - fast)")
+    parser.add_argument("-o", "--output", dest="name", default="", help="Name to write output to.")
     args = parser.parse_args()
-    
+
+    if not os.path.exists("/results"):
+        os.mkdir("/results")
+
+    if args.name:
+        if not os.path.exists("/results/"+args.name):
+            os.mkdir("/results/"+args.name)
+        os.mkdir("/results/"+args.name+"/"+timestamp)
+        directory = "/results/"+args.name+"/"+timestamp
+    else:
+        os.mkdir("/results/"+timestamp)
+        directory = "/results/"+timestamp
+
+    if not os.path.exists("/testssl"):
+        os.mkdir("/testssl")
+        cmd = ["sudo", "git", "clone", "https://github.com/drwetter/testssl.sh", "/testssl"]
+        run_command(cmd)
+    else:
+        cmd = ["sudo", "cd", "/testssl"]
+        run_command(cmd)
+        cmd = ["sudo", "git", "pull"]
+
+    if "," in args.IP:
+        ipNmap = re.sub(",", " ", args.IP)
+    else:
+        ipNmap = args.IP
+
+
+    ######### DEBUGGING #########
+
+    #cmd = ["sudo", "touch", "/home/kali/Desktop/debug.txt"]
+    #run_command(cmd)
+
+    outfile = open("/home/kali/Desktop/debug.txt", "at")
+    outfile.write("IP's nmap: " + ipNmap + "\nIP's: " + args.IP + "\n\n")
+    outfile.flush()
+    outfile.close()
+
+    ######### END DEBUGGING #########
+
+
     # Construct ports string
     ports = ""
     tcp = args.tcp_ports and args.tcp_ports.lower() not in ["0", "None"]
@@ -117,7 +166,7 @@ def main():
     if udp:
         ports += "U:" + args.udp_ports
         
-    enum(args.IP, ports, args.max_rate, args.delay, args.directory, args.tcp_ports, args.udp_ports)
+    enum(args.IP, ports, args.max_rate, args.delay, directory, ipNmap, args.tcp_ports, args.udp_ports)
         
     
 if __name__ == "__main__":
