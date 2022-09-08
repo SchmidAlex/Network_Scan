@@ -99,7 +99,7 @@ def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
         outfile.flush()
         outfile.close()
 
-        
+
 
 def main():
 
@@ -126,6 +126,7 @@ def main():
     parser.add_argument("-r", "--max-rate", dest="max_rate", default=500, type=int, help="Send massscan packets no faster than <number> per second")
     parser.add_argument("-T", "--delay", dest="delay", default=3, type=int, help="Set nmap delay 0 - 5 (slow - fast)")
     parser.add_argument("-o", "--output", dest="name", help="Name to write output to.")
+    parser.add_argument("-uo", "--under-output", dest="range", default="", help="IP range you want to scan if several with the same name are going to be scanned.")
     args = parser.parse_args()
 
     if not os.path.exists("/results"):
@@ -134,8 +135,15 @@ def main():
     if args.name:
         if not os.path.exists("/results/"+args.name):
             os.mkdir("/results/"+args.name)
-        os.mkdir("/results/"+args.name+"/"+timestamp)
-        directory = "/results/"+args.name+"/"+timestamp
+        if args.uo:
+            if not os.path.exitsts("/results/"+args.name+args.uo):
+                os.mkdir("/results/"+args.name+args.uo)
+            
+            os.mkdir("/results/"+args.name+args.uo+"/"+timestamp)
+            directory = "/results/"+args.name+args.uo+"/"+timestamp
+        else:
+            os.mkdir("/results/"+args.name+"/"+timestamp)
+            directory = "/results/"+args.name+"/"+timestamp
     else:
         os.mkdir("/results/"+timestamp)
         directory = "/results/"+timestamp
