@@ -51,7 +51,7 @@ def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
     output = run_command(cmd)
 
     # ↓ would be the correct way to approve masscans result
-    cmd = ["sudo", "nmap", "-sV", "-p", nmapPorts, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ipNmap]
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "-p", nmapPorts, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ipNmap]
     #run_command(cmd)
     subprocess.run(cmd,shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -70,8 +70,8 @@ def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
     #    outfile.close()
 
     # ↓ would be the correct way to approve masscans result
-    #cmd = ["sudo", "nmap", "-sV", "-p", nmapUPorts, ipNmap, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
-    #run_command(cmd)
+    cmd = ["sudo", "nmap", "-sV", "-p", nmapUPorts, ipNmap, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+    run_command(cmd)
 
     # ↓ is a faster way to confirm masscans result
     #if resultsUDP:
@@ -99,13 +99,15 @@ def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
         outfile.flush()
         outfile.close()
 
-
+        
 
 def main():
 
     if not os.path.exists("/Network_Scan"):
         os.mkdir("/Network_Scan")
         cmd = ["sudo", "git", "clone", "https://github.com/SchmidAlex/Network_Scan", "/Network_Scan"]
+        run_command(cmd)
+        cmd = ["sudo", "chmod", "777", "/Network_Scan/scan.py"]
         run_command(cmd)
     else:
         cmd = ["sudo", "cd", "/Network_Scan"]
@@ -123,7 +125,7 @@ def main():
     parser.add_argument("-up", "--udp-ports", dest="udp_ports", default="1-65535", help="List of ports/port ranges to scan (UDP only).")
     parser.add_argument("-r", "--max-rate", dest="max_rate", default=500, type=int, help="Send massscan packets no faster than <number> per second")
     parser.add_argument("-T", "--delay", dest="delay", default=3, type=int, help="Set nmap delay 0 - 5 (slow - fast)")
-    parser.add_argument("-o", "--output", dest="name", default="", help="Name to write output to.")
+    parser.add_argument("-o", "--output", dest="name", help="Name to write output to.")
     args = parser.parse_args()
 
     if not os.path.exists("/results"):
@@ -150,21 +152,27 @@ def main():
 
     if "," in args.IP:
         ipNmap = re.sub(",", " ", args.IP)
+        # why cant nmap understand the new ip's?
     else:
         ipNmap = args.IP
 
+    ######### A TRY -> lets try to give nmap ip's and craft them togheter for masscan .... worth a shot
 
-    ######### DEBUGGING #########
+
+    ######### ISSUES AND DEBUGGING #########
+
+    # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
+    # 2. the git-repo of this file will be secured, so the "normal" user cant let it run -> theres a solution, well, a workaround -> untested
 
     #cmd = ["sudo", "touch", "/home/kali/Desktop/debug.txt"]
     #run_command(cmd)
 
-    outfile = open("/home/kali/Desktop/debug.txt", "at")
-    outfile.write("IP's nmap: " + ipNmap + "\nIP's: " + args.IP + "\n\n")
-    outfile.flush()
-    outfile.close()
+    #outfile = open("/home/kali/Desktop/debug.txt", "at")
+    #outfile.write("IP's nmap: " + ipNmap + "\nIP's: " + args.IP + "\n\n")
+    #outfile.flush()
+    #outfile.close()
 
-    ######### END DEBUGGING #########
+    ############ END DEBUGGING ############
 
 
     # Construct ports string
