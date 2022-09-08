@@ -7,7 +7,17 @@ import sys
 import os
 from datetime import datetime
 
+######### lets the program get git repositories needed or updates #########
+def repoClaim():
+    #TODO: take it from main and pack it here
+    print("TODO")
 
+######### lets the program check for some directories and files #########
+def checkDirectories():
+    #TODO: take it from main and pack it here
+    print("TODO")
+
+######### lets the program run any commandline command #########
 def run_command(command):
     print("\nRunning command: "+' '.join(command))
     sp = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -21,93 +31,52 @@ def run_command(command):
             sys.stdout.write(out)
             sys.stdout.flush()
     return output
- 
 
-def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
-    # Running masscan
+######### lets the programm scan with masscan (normal scan) #########
+def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
     cmd = ["sudo", "touch", directory+"masscan_result.txt"]
+    run_command(cmd)
+    cmd = ["sudo", "masscan", "-e", "eth0", "--top-ports" + tcpPorts + ",U:" + udpPorts, "--max-rate", str(max_rate), "--interactive", ip]
     output = run_command(cmd)
     outfile = open(directory+"masscan_result.txt", "at")
-
-    cmd = ["sudo", "masscan", "-e", "eth0", "-p" + ports,
-           "--max-rate", str(max_rate), "--interactive", ip]
-    output = run_command(cmd)
-
     for line in output.splitlines():
         if "rate:" not in line: # Don't write 'rate:' lines
             outfile.write(line + "\n")
     outfile.flush()
     outfile.close()
 
-    # Get discovered TCP ports from the masscan output, sort them and run nmap for those
-    resultsTCP = re.findall('port (\d*)/tcp', output)
-    resultsUDP = re.findall('port (\d*)/udp', output)
-
+######### lets the programm scan with nmap (normal scan) #########
+def nmap(ip, tcpPorts, udpPorts, delay, directory):
     cmd = ["sudo", "touch", directory+"nmap_result_tcp.txt"]
-    output = run_command(cmd)
     cmd = ["sudo", "touch", directory+"nmap_result_fortestssl.txt"]
-    output = run_command(cmd)
     cmd = ["sudo", "touch", directory+"nmap_result_udp.txt"]
-    output = run_command(cmd)
 
-    # ↓ would be the correct way to approve masscans result
-    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", nmapPorts, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ipNmap]
-    #run_command(cmd)
-    subprocess.run(cmd,shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-    # ↓ is a faster way to confirm masscans result
-    #if resultsTCP:
-    #    tcp_ports = list({int(port) for port in resultsTCP})
-    #    tcp_ports.sort()
-    #    tcp_ports = ''.join(str(tcp_ports)[1:-1].split())
-    #    # Running nmap
-    #    cmd = ["sudo", "nmap", "-sV", "-p", tcp_ports, str(ipNmap), "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
-    #    output = run_command(cmd)
-    #else:
-    #    outfile = open(directory+"nmap_result_tcp.txt", "at")
-    #    outfile.write("Because we didnt got any TCP-results in masscan, we wont do an nmap on TCP-ports")
-    #    outfile.flush()
-    #    outfile.close()
-
-    # ↓ would be the correct way to approve masscans result
-    cmd = ["sudo", "nmap", "-sV", "--top-ports", nmapUPorts, ipNmap, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+    # Scan top given TCP ports with nmap
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ip]
     run_command(cmd)
 
-    # ↓ is a faster way to confirm masscans result
-    #if resultsUDP:
-    #    udp_ports = list({int(port) for port in resultsUDP})
-    #    udp_ports.sort()
-    #    udp_ports = ''.join(str(udp_ports)[1:-1].split())
-    #    # Running nmap
-    #    cmd = ["sudo", "nmap", "-sV", "-sU", "-p", udp_ports, ipNmap, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt"]
-    #    output = run_command(cmd)
-    #else:
-    #    outfile = open(directory+"nmap_result_udp.txt", "at")
-    #    outfile.write("Because we didnt got any UDP-results in masscan, we wont do an nmap on UDP-ports")
-    #    outfile.flush()
-    #    outfile.close()
+    # Scan top given UDP ports with nmap
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", directory+"nmap_result_udp.txt", ip]
+    run_command(cmd)
 
-    # Test all scanned and open tcp-ports nmap found with testssl
-    if resultsTCP:
-        cmd = ["sudo", "/testssl/testssl.sh", "--file", directory+"nmap_result_fortestssl.txt", "-oL", directory+"testssl_result.txt"]
-        output = run_command(cmd)
-    else:
-        cmd = ["sudo", "touch", directory+"testssl_result.txt"]
-        output = run_command(cmd)
-        outfile = open(directory+"testssl_result.txt", "at")
-        outfile.write("No test was made because no open TCP-port was found")
-        outfile.flush()
-        outfile.close()
+######### lets the programm check all ssl connections with the script testssl.sh #########
+def testssl(directory):
+    cmd = ["sudo", "/testssl/testssl.sh", "--file", directory+"nmap_result_fortestssl.txt", "-oL", directory+"testssl_result.txt"]
+    run_command(cmd)
 
 
+
+
+
+#
+#            MAIN
+#################################################################################
 
 def main():
 
     if not os.path.exists("/Network_Scan"):
         os.mkdir("/Network_Scan")
         cmd = ["sudo", "git", "clone", "https://github.com/SchmidAlex/Network_Scan", "/Network_Scan"]
-        run_command(cmd)
-        cmd = ["sudo", "chmod", "777", "/Network_Scan/scan.py"]
         run_command(cmd)
     else:
         cmd = ["sudo", "cd", "/Network_Scan"]
@@ -123,8 +92,6 @@ def main():
     parser.add_argument("IP",  help="IP address to scan.")
     parser.add_argument("-tp", "--tcp-ports", dest="tcp_ports", default="1-65535", help="List of ports/port ranges to scan (TCP only).")
     parser.add_argument("-up", "--udp-ports", dest="udp_ports", default="1-65535", help="List of ports/port ranges to scan (UDP only).")
-    parser.add_argument("-tpnm", "--tcp-ports-nmap", dest="tcp_portsnmap", default="10000", help="Top ports to scan (TCP).")
-    parser.add_argument("-upnm", "--udp-ports-nmap", dest="udp_portsnmap", default="1000", help="Top ports to scan (UDP).")
     parser.add_argument("-r", "--max-rate", dest="max_rate", default=500, type=int, help="Send massscan packets no faster than <number> per second")
     parser.add_argument("-T", "--delay", dest="delay", default=3, type=int, help="Set nmap delay 0 - 5 (slow - fast)")
     parser.add_argument("-o", "--output", dest="name", help="Name to write output to.")
@@ -200,8 +167,12 @@ def main():
         ports += ","
     if udp:
         ports += "U:" + args.udp_ports
-        
-    enum(args.IP, ports, args.max_rate, args.delay, directory, ipNmap, args.tcp_portsnmap, args.udp_portsnmap)
+
+    masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
+
+    nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
+
+    #testssl()
         
     
 if __name__ == "__main__":
