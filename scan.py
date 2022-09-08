@@ -121,8 +121,10 @@ def main():
 
     parser = argparse.ArgumentParser(description="Port/Service enumaration tool.")
     parser.add_argument("IP",  help="IP address to scan.")
-    parser.add_argument("-tp", "--tcp-ports", dest="tcp_ports", default="1-65535", help="Top ports to scan (TCP) || List of ports/port ranges to scan (TCP only).")
-    parser.add_argument("-up", "--udp-ports", dest="udp_ports", default="1-65535", help="Top ports to scan (UDP) || List of ports/port ranges to scan (UDP only).")
+    parser.add_argument("-tp", "--tcp-ports", dest="tcp_ports", default="1-65535", help="List of ports/port ranges to scan (TCP only).")
+    parser.add_argument("-up", "--udp-ports", dest="udp_ports", default="1-65535", help="List of ports/port ranges to scan (UDP only).")
+    parser.add_argument("-tpnm", "--udp-ports-nmap", dest="udp_portsnmap", default="10000", help="Top ports to scan (UDP).")
+    parser.add_argument("-upnm", "--udp-ports-nmap", dest="udp_portsnmap", default="10000", help="Top ports to scan (UDP).")
     parser.add_argument("-r", "--max-rate", dest="max_rate", default=500, type=int, help="Send massscan packets no faster than <number> per second")
     parser.add_argument("-T", "--delay", dest="delay", default=3, type=int, help="Set nmap delay 0 - 5 (slow - fast)")
     parser.add_argument("-o", "--output", dest="name", help="Name to write output to.")
@@ -194,7 +196,7 @@ def main():
     if udp:
         ports += "U:" + args.udp_ports
         
-    enum(args.IP, ports, args.max_rate, args.delay, directory, ipNmap, args.tcp_ports, args.udp_ports)
+    enum(args.IP, ports, args.max_rate, args.delay, directory, ipNmap, args.tcp_portsnmap, args.udp_portsnmap)
         
     
 if __name__ == "__main__":
