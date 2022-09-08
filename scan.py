@@ -51,7 +51,7 @@ def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
     output = run_command(cmd)
 
     # ↓ would be the correct way to approve masscans result
-    cmd = ["sudo", "nmap", "-sV", "-Pn", "-p", nmapPorts, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ipNmap]
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", nmapPorts, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ipNmap]
     #run_command(cmd)
     subprocess.run(cmd,shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -70,7 +70,7 @@ def enum(ip, ports, max_rate, speed, directory, ipNmap, nmapPorts, nmapUPorts):
     #    outfile.close()
 
     # ↓ would be the correct way to approve masscans result
-    cmd = ["sudo", "nmap", "-sV", "-p", nmapUPorts, ipNmap, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
+    cmd = ["sudo", "nmap", "-sV", "--top-ports", nmapUPorts, ipNmap, "-T", str(speed), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt"]
     run_command(cmd)
 
     # ↓ is a faster way to confirm masscans result
@@ -121,8 +121,8 @@ def main():
 
     parser = argparse.ArgumentParser(description="Port/Service enumaration tool.")
     parser.add_argument("IP",  help="IP address to scan.")
-    parser.add_argument("-tp", "--tcp-ports", dest="tcp_ports", default="1-65535", help="List of ports/port ranges to scan (TCP only).")
-    parser.add_argument("-up", "--udp-ports", dest="udp_ports", default="1-65535", help="List of ports/port ranges to scan (UDP only).")
+    parser.add_argument("-tp", "--tcp-ports", dest="tcp_ports", default="1-65535", help="Top ports to scan (TCP) || List of ports/port ranges to scan (TCP only).")
+    parser.add_argument("-up", "--udp-ports", dest="udp_ports", default="1-65535", help="Top ports to scan (UDP) || List of ports/port ranges to scan (UDP only).")
     parser.add_argument("-r", "--max-rate", dest="max_rate", default=500, type=int, help="Send massscan packets no faster than <number> per second")
     parser.add_argument("-T", "--delay", dest="delay", default=3, type=int, help="Set nmap delay 0 - 5 (slow - fast)")
     parser.add_argument("-o", "--output", dest="name", help="Name to write output to.")
