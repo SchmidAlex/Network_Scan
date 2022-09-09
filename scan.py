@@ -108,6 +108,10 @@ def testssl(directory):
     run_command(cmd)
 
 
+######### lets compare the result of the last scan on this system (if existent) with the result of this scan #########
+def compare(directory):
+    #TODO: make a comparer
+    print("TODO")
 
 
 
@@ -162,6 +166,8 @@ def main():
     nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
 
     testssl(directory)
+
+    compare(directory)
         
     
 if __name__ == "__main__":
