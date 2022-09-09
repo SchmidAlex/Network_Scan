@@ -67,7 +67,7 @@ def run_command(command):
 def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
     cmd = ["sudo", "touch", directory+"masscan_result.txt"]
     run_command(cmd)
-    cmd = ["sudo", "masscan", "-e", "eth0", "--top-ports" + tcpPorts + ",U:" + udpPorts, "--max-rate", str(max_rate), "--interactive", ip]
+    cmd = ["sudo", "masscan", "-e", "eth0", "--top-ports " + tcpPorts + ",U:" + udpPorts, "--max-rate", str(max_rate), "--interactive", ip]
     output = run_command(cmd)
     outfile = open(directory+"masscan_result.txt", "at")
     for line in output.splitlines():
