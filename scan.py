@@ -14,9 +14,7 @@ def repoClaim():
         cmd = ["sudo", "git", "clone", "https://github.com/SchmidAlex/Network_Scan", "/Network_Scan"]
         run_command(cmd)
     else:
-        cmd = ["sudo", "cd", "/Network_Scan"]
-        run_command(cmd)
-        cmd = ["sudo", "git", "pull"]
+        cmd = ["sudo", "git", "-C", "/Network_Scan", "pull"]
         run_command(cmd)
 
 
