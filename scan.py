@@ -9,13 +9,45 @@ from datetime import datetime
 
 ######### lets the program get git repositories needed or updates #########
 def repoClaim():
-    #TODO: take it from main and pack it here
-    print("TODO")
+    if not os.path.exists("/Network_Scan"):
+        os.mkdir("/Network_Scan")
+        cmd = ["sudo", "git", "clone", "https://github.com/SchmidAlex/Network_Scan", "/Network_Scan"]
+        run_command(cmd)
+    else:
+        cmd = ["sudo", "cd", "/Network_Scan"]
+        run_command(cmd)
+        cmd = ["sudo", "git", "pull"]
+        run_command(cmd)
+
 
 ######### lets the program check for some directories and files #########
-def checkDirectories():
-    #TODO: take it from main and pack it here
-    print("TODO")
+def checkDirectories(name, range):
+    stamp = datetime.now()
+    timestamp = stamp.strftime("%d_%m_%Y--%H_%M_%S/")
+    
+    if not os.path.exists("/results"):
+        os.mkdir("/results")
+
+    if "/" in range:
+        iprange = re.sub("/", "_", range)
+    else:
+        iprange = range
+
+    if name:
+        if not os.path.exists("/results/"+name):
+            os.mkdir("/results/"+name)
+        if iprange:
+            if not os.path.exitsts("/results/"+name+"/"+iprange):
+                os.mkdir("/results/"+name+"/"+iprange)
+            
+            os.mkdir("/results/"+name+"/"+iprange+"/"+timestamp)
+            return "/results/"+name+"/"+iprange+"/"+timestamp
+        else:
+            os.mkdir("/results/"+name+"/"+timestamp)
+            return "/results/"+name+"/"+timestamp
+    else:
+        os.mkdir("/results/"+timestamp)
+        return "/results/"+timestamp
 
 ######### lets the program run any commandline command #########
 def run_command(command):
@@ -32,6 +64,7 @@ def run_command(command):
             sys.stdout.flush()
     return output
 
+
 ######### lets the programm scan with masscan (normal scan) #########
 def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
     cmd = ["sudo", "touch", directory+"masscan_result.txt"]
@@ -44,6 +77,7 @@ def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
             outfile.write(line + "\n")
     outfile.flush()
     outfile.close()
+
 
 ######### lets the programm scan with nmap (normal scan) #########
 def nmap(ip, tcpPorts, udpPorts, delay, directory):
@@ -59,8 +93,19 @@ def nmap(ip, tcpPorts, udpPorts, delay, directory):
     cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", directory+"nmap_result_udp.txt", ip]
     run_command(cmd)
 
+
 ######### lets the programm check all ssl connections with the script testssl.sh #########
 def testssl(directory):
+    if not os.path.exists("/testssl"):
+        os.mkdir("/testssl")
+        cmd = ["sudo", "git", "clone", "https://github.com/drwetter/testssl.sh", "/testssl"]
+        run_command(cmd)
+    else:
+        cmd = ["sudo", "cd", "/testssl"]
+        run_command(cmd)
+        cmd = ["sudo", "git", "pull"]
+        run_command(cmd)
+
     cmd = ["sudo", "/testssl/testssl.sh", "--file", directory+"nmap_result_fortestssl.txt", "-oL", directory+"testssl_result.txt"]
     run_command(cmd)
 
@@ -73,21 +118,6 @@ def testssl(directory):
 #################################################################################
 
 def main():
-
-    if not os.path.exists("/Network_Scan"):
-        os.mkdir("/Network_Scan")
-        cmd = ["sudo", "git", "clone", "https://github.com/SchmidAlex/Network_Scan", "/Network_Scan"]
-        run_command(cmd)
-    else:
-        cmd = ["sudo", "cd", "/Network_Scan"]
-        run_command(cmd)
-        cmd = ["sudo", "git", "pull"]
-        run_command(cmd)
-
-    stamp = datetime.now()
-
-    timestamp = stamp.strftime("%d_%m_%Y--%H_%M_%S/")
-
     parser = argparse.ArgumentParser(description="Port/Service enumaration tool.")
     parser.add_argument("IP",  help="IP address to scan.")
     parser.add_argument("-tp", "--tcp-ports", dest="tcp_ports", default="1-65535", help="List of ports/port ranges to scan (TCP only).")
@@ -98,43 +128,16 @@ def main():
     parser.add_argument("-uo", "--under-output", dest="range", default="", help="IP range you want to scan if several with the same name are going to be scanned.")
     args = parser.parse_args()
 
-    if not os.path.exists("/results"):
-        os.mkdir("/results")
+    repoClaim()
 
-    if "/" in args.range:
-        iprange = re.sub("/", "_", args.range)
-    else:
-        iprange = args.range
+    directory = checkDirectories(args.name, args.range)
 
-    if args.name:
-        if not os.path.exists("/results/"+args.name):
-            os.mkdir("/results/"+args.name)
-        if iprange:
-            if not os.path.exitsts("/results/"+args.name+"/"+iprange):
-                os.mkdir("/results/"+args.name+"/"+iprange)
-            
-            os.mkdir("/results/"+args.name+"/"+iprange+"/"+timestamp)
-            directory = "/results/"+args.name+"/"+iprange+"/"+timestamp
-        else:
-            os.mkdir("/results/"+args.name+"/"+timestamp)
-            directory = "/results/"+args.name+"/"+timestamp
-    else:
-        os.mkdir("/results/"+timestamp)
-        directory = "/results/"+timestamp
 
-    if not os.path.exists("/testssl"):
-        os.mkdir("/testssl")
-        cmd = ["sudo", "git", "clone", "https://github.com/drwetter/testssl.sh", "/testssl"]
-        run_command(cmd)
-    else:
-        cmd = ["sudo", "cd", "/testssl"]
-        run_command(cmd)
-        cmd = ["sudo", "git", "pull"]
-        run_command(cmd)
+    
 
     if "," in args.IP:
         ipNmap = re.sub(",", " ", args.IP)
-        # why cant nmap understand the new ip's?
+        # why cant nmap understand the new ip's? -> check issues
     else:
         ipNmap = args.IP
 
@@ -156,23 +159,11 @@ def main():
 
     ############ END DEBUGGING ############
 
-
-    # Construct ports string
-    ports = ""
-    tcp = args.tcp_ports and args.tcp_ports.lower() not in ["0", "None"]
-    udp = args.udp_ports and args.udp_ports.lower() not in ["0", "None"]
-    if tcp:
-        ports += args.tcp_ports
-    if tcp and udp:
-        ports += ","
-    if udp:
-        ports += "U:" + args.udp_ports
-
     masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
 
     nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
 
-    #testssl()
+    testssl(directory)
         
     
 if __name__ == "__main__":
