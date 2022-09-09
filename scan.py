@@ -35,7 +35,7 @@ def checkDirectories(name, range):
         if not os.path.exists("/results/"+name):
             os.mkdir("/results/"+name)
         if iprange:
-            if not os.path.exitsts("/results/"+name+"/"+iprange):
+            if not os.path.exists("/results/"+name+"/"+iprange):
                 os.mkdir("/results/"+name+"/"+iprange)
             
             os.mkdir("/results/"+name+"/"+iprange+"/"+timestamp)
