@@ -137,9 +137,9 @@ def main():
 
     
 
-    if "," in args.IP:
-        ipNmap = re.sub(",", " ", args.IP)
-        # why cant nmap understand the new ip's? -> check issues
+    if ", " in args.IP:
+        ipNmap = re.sub(" ", "", args.IP)
+        # why cant nmap understand the new ip's? -> check issues ->rly check it and think of a solution....
     else:
         ipNmap = args.IP
 
@@ -167,7 +167,7 @@ def main():
 
     testssl(directory)
 
-    compare(directory)
+    #compare(directory)
         
     
 if __name__ == "__main__":
