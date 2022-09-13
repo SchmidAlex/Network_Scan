@@ -67,6 +67,7 @@ def run_command(command):
 def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
     cmd = ["sudo", "touch", directory+"masscan_result.txt"]
     run_command(cmd)
+    #those ports doesnt work :( maybe make two single scans like nmap -> TODO: Ask max
     cmd = ["sudo", "masscan", "-e", "eth0", "--top-ports " + tcpPorts + ",U:" + udpPorts, "--max-rate", str(max_rate), "--interactive", ip]
     output = run_command(cmd)
     outfile = open(directory+"masscan_result.txt", "at")
@@ -138,10 +139,10 @@ def main():
     
 
     if ", " in args.IP:
-        ipNmap = re.sub(" ", "", args.IP)
+        ipMasscan = re.sub(" ", "", args.IP)
         # why cant nmap understand the new ip's? -> check issues ->rly check it and think of a solution....
     else:
-        ipNmap = args.IP
+        ipMasscan = args.IP
 
     ######### A TRY -> lets try to give nmap ip's and craft them togheter for masscan .... worth a shot
 
@@ -149,19 +150,11 @@ def main():
     ######### ISSUES AND DEBUGGING #########
 
     # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
-    # 2. the git-repo of this file will be secured, so the "normal" user cant let it run -> theres a solution, well, a workaround -> untested
-
-    #cmd = ["sudo", "touch", "/home/kali/Desktop/debug.txt"]
-    #run_command(cmd)
-
-    #outfile = open("/home/kali/Desktop/debug.txt", "at")
-    #outfile.write("IP's nmap: " + ipNmap + "\nIP's: " + args.IP + "\n\n")
-    #outfile.flush()
-    #outfile.close()
 
     ############ END DEBUGGING ############
 
-    masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
+    #fast check for ip's
+    masscan(ipMasscan, args.tcp_ports, args.udp_ports, args.max_rate, directory)
 
     nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
 
