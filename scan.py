@@ -154,7 +154,7 @@ def main():
     ############ END DEBUGGING ############
 
     #fast check for ip's
-    masscan(ipMasscan, args.tcp_ports, args.udp_ports, args.max_rate, directory)
+    masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
 
     nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
 
