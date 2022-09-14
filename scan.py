@@ -9,6 +9,7 @@ from datetime import datetime
 
 ######### lets the program get git repositories needed or updates #########
 def repoClaim():
+    print("\nFunction repoClaim is running. If there is a newer version of this script it will be updated.")
     if not os.path.exists("/Network_Scan"):
         os.mkdir("/Network_Scan")
         cmd = ["sudo", "git", "clone", "https://github.com/SchmidAlex/Network_Scan", "/Network_Scan"]
@@ -20,6 +21,7 @@ def repoClaim():
 
 ######### lets the program check for some directories and files #########
 def checkDirectories(name, range):
+    print("\nCheckdirectories, we check if the directories exists or not and do them if needed.")
     stamp = datetime.now()
     timestamp = stamp.strftime("%d_%m_%Y--%H_%M_%S/")
     
@@ -65,6 +67,7 @@ def run_command(command):
 
 ######### lets the programm scan with masscan (normal scan) #########
 def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
+    print("\nRunning masscan 'normal' scan")
     cmd = ["sudo", "touch", directory+"masscan_result.txt"]
     run_command(cmd)
     #those ports doesnt work :( maybe make two single scans like nmap -> TODO: Ask max
@@ -80,6 +83,7 @@ def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
 
 ######### lets the programm scan with nmap (normal scan) #########
 def nmap(ip, tcpPorts, udpPorts, delay, directory):
+    print("\nrunning nmap's 'normal' scan")
     cmd = ["sudo", "touch", directory+"nmap_result_tcp.txt"]
     cmd = ["sudo", "touch", directory+"nmap_result_fortestssl.txt"]
     cmd = ["sudo", "touch", directory+"nmap_result_udp.txt"]
@@ -95,6 +99,7 @@ def nmap(ip, tcpPorts, udpPorts, delay, directory):
 
 ######### lets the programm check all ssl connections with the script testssl.sh #########
 def testssl(directory):
+    print("\nCheck if testssl exists and update it, so we can let it run")
     if not os.path.exists("/testssl"):
         os.mkdir("/testssl")
         cmd = ["sudo", "git", "clone", "https://github.com/drwetter/testssl.sh", "/testssl"]
@@ -136,17 +141,6 @@ def main():
     directory = checkDirectories(args.name, args.range)
 
 
-    
-
-    if " " in args.IP:
-        ipMasscan = re.sub(" ", ",", args.IP)
-        # why cant nmap understand the new ip's? -> check issues ->rly check it and think of a solution....
-    else:
-        ipMasscan = args.IP
-
-    ######### A TRY -> lets try to give nmap ip's and craft them togheter for masscan .... worth a shot
-
-
     ######### ISSUES AND DEBUGGING #########
 
     # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
@@ -154,7 +148,7 @@ def main():
     ############ END DEBUGGING ############
 
     #fast check for ip's
-    masscan(ipMasscan, args.tcp_ports, args.udp_ports, args.max_rate, directory)
+    masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
 
     nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
 
