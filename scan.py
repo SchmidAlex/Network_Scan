@@ -157,6 +157,8 @@ def main():
 
     # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
 
+    # 2. gota make the strings to ints :/ also remove '_' and '-' in that case, make a 2d array of it?
+
     cmd = ["sudo", "ls", "/results/" + args.name + "/" + args.range]
     result = run_command(cmd)
     datearray = result.split()
@@ -166,13 +168,13 @@ def main():
     ############ END DEBUGGING ############
 
     #fast check for ip's
-    #masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
+    masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
 
-    #nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
+    nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
 
-    #testssl(directory)
+    testssl(directory)
 
-    #compare(directory)
+    compare(directory)
         
     
 if __name__ == "__main__":
