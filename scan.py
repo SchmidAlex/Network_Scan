@@ -19,12 +19,15 @@ def repoClaim():
         run_command(cmd)
 
 
-######### lets the program check for some directories and files #########
-def checkDirectories(name, range):
-    print("\nCheckdirectories, we check if the directories exists or not and do them if needed:")
+######### needed to compare differences between the scans #########
+def getTimestamp():
+    print("\nCreate a timestamp we will need")
     stamp = datetime.now()
-    timestamp = stamp.strftime("%d_%m_%Y--%H_%M_%S/")
-    
+    return stamp.strftime("%d_%m_%Y--%H_%M_%S/")
+
+######### lets the program check for some directories and files #########
+def checkDirectories(name, range, timestamp):
+    print("\nCheckdirectories, we check if the directories exists or not and do them if needed:")
     if not os.path.exists("/results"):
         os.mkdir("/results")
 
@@ -144,7 +147,8 @@ def main():
 
     repoClaim()
 
-    directory = checkDirectories(args.name, args.range)
+    timestamp = getTimestamp()
+    directory = checkDirectories(args.name, args.range, timestamp)
 
     #get all directories within /result/[name]/ or /result/[name]/[range]
 
@@ -155,7 +159,9 @@ def main():
 
     cmd = ["sudo", "ls", "/results/" + args.name + "/" + args.range]
     result = run_command(cmd)
-    print(result)
+    datearray = result.split()
+    res = min(datearray, key=lambda sub: abs(sub - timestamp))
+    print(res)
 
     ############ END DEBUGGING ############
 
