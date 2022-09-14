@@ -92,7 +92,7 @@ def nmap(ip, tcpPorts, udpPorts, delay, directory):
     cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ip]
     run_command(cmd)
 
-    # Scan top given UDP ports with nmap
+    # Scan top given UDP ports with nmap -> it takes ages to run this
     cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", directory+"nmap_result_udp.txt", ip]
     run_command(cmd)
 
@@ -153,7 +153,7 @@ def main():
 
     # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
 
-    cmd = ["sudo", "ls", "/result/" + args.name + "/" + args.range]
+    cmd = ["sudo", "ls", "/results/" + args.name + "/" + args.range]
     result = run_command(cmd)
     print(result)
 
