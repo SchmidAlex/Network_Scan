@@ -138,8 +138,8 @@ def main():
 
     
 
-    if ", " in args.IP:
-        ipMasscan = re.sub(" ", "", args.IP)
+    if " " in args.IP:
+        ipMasscan = re.sub(" ", ",", args.IP)
         # why cant nmap understand the new ip's? -> check issues ->rly check it and think of a solution....
     else:
         ipMasscan = args.IP
@@ -154,7 +154,7 @@ def main():
     ############ END DEBUGGING ############
 
     #fast check for ip's
-    masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
+    masscan(ipMasscan, args.tcp_ports, args.udp_ports, args.max_rate, directory)
 
     nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
 
