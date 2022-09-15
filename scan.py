@@ -25,6 +25,7 @@ def getTimestamp():
     stamp = datetime.now()
     return stamp.strftime("%d_%m_%Y--%H_%M_%S/")
 
+
 ######### lets the program check for some directories and files #########
 def checkDirectories(name, range, timestamp):
     print("\nCheckdirectories, we check if the directories exists or not and do them if needed:")
@@ -51,6 +52,7 @@ def checkDirectories(name, range, timestamp):
     else:
         os.mkdir("/results/"+timestamp)
         return "/results/"+timestamp
+
 
 ######### lets the program run any commandline command #########
 def run_command(command):
@@ -161,20 +163,25 @@ def main():
 
     cmd = ["sudo", "ls", "/results/" + args.name + "/" + args.range]
     result = run_command(cmd)
-    datearray = result.split()
-    res = min(datearray, key=lambda sub: abs(sub - timestamp))
+    datearrayString = result.split()
+    datearrayInt = []
+
+    for val in datearrayString:
+        datearrayInt.append(datetime.strptime(val, "%d_%m_%Y--%H_%M_%S/"))
+
+    res = min(datearrayInt, key=lambda sub: abs(sub - timestamp))
     print(res)
 
     ############ END DEBUGGING ############
 
     #fast check for ip's
-    masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
+    #masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
 
-    nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
+    #nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
 
-    testssl(directory)
+    #testssl(directory)
 
-    compare(directory)
+    #compare(directory)
         
     
 if __name__ == "__main__":
