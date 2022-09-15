@@ -70,14 +70,14 @@ def run_command(command):
 
 
 ######### lets the programm scan with masscan (normal scan) #########
-def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
+def masscan(ip, tcpPorts, udpPorts, max_rate, newDirectory):
     print("\nRunning masscan 'normal' scan:")
-    cmd = ["sudo", "touch", directory+"masscan_result.txt"]
+    cmd = ["sudo", "touch", newDirectory+"masscan_result.txt"]
     run_command(cmd)
     #those ports doesnt work :( maybe make two single scans like nmap -> TODO: Ask max
     cmd = ["sudo", "masscan", "-e", "eth0", "--top-ports " + tcpPorts + ",U:" + udpPorts, "--max-rate", str(max_rate), "--interactive", ip]
     output = run_command(cmd)
-    outfile = open(directory+"masscan_result.txt", "at")
+    outfile = open(newDirectory+"masscan_result.txt", "at")
     for line in output.splitlines():
         if "rate:" not in line: # Don't write 'rate:' lines
             outfile.write(line + "\n")
@@ -86,23 +86,23 @@ def masscan(ip, tcpPorts, udpPorts, max_rate, directory):
 
 
 ######### lets the programm scan with nmap (normal scan) #########
-def nmap(ip, tcpPorts, udpPorts, delay, directory):
+def nmap(ip, tcpPorts, udpPorts, delay, newDirectory):
     print("\nrunning nmap's 'normal' scan:")
-    cmd = ["sudo", "touch", directory+"nmap_result_tcp.txt"]
-    cmd = ["sudo", "touch", directory+"nmap_result_fortestssl.txt"]
-    cmd = ["sudo", "touch", directory+"nmap_result_udp.txt"]
+    cmd = ["sudo", "touch", newDirectory+"nmap_result_tcp.txt"]
+    cmd = ["sudo", "touch", newDirectory+"nmap_result_fortestssl.txt"]
+    cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
 
     # Scan top given TCP ports with nmap
-    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", directory+"nmap_result_tcp.txt", "-oG", directory+"nmap_result_fortestssl.txt", ip]
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", ip]
     run_command(cmd)
 
     # Scan top given UDP ports with nmap -> it takes ages to run this
-    cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", directory+"nmap_result_udp.txt", ip]
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", ip]
     run_command(cmd)
 
 
 ######### lets the programm check all ssl connections with the script testssl.sh #########
-def testssl(directory):
+def testssl(newDirectory):
     print("\nCheck if testssl exists and update it, so we can let it run:")
     if not os.path.exists("/testssl"):
         os.mkdir("/testssl")
@@ -114,12 +114,25 @@ def testssl(directory):
         cmd = ["sudo", "git", "pull"]
         run_command(cmd)
 
-    cmd = ["sudo", "/testssl/testssl.sh", "--file", directory+"nmap_result_fortestssl.txt", "-oL", directory+"testssl_result.txt"]
+    cmd = ["sudo", "/testssl/testssl.sh", "--file", newDirectory+"nmap_result_fortestssl.txt", "-oL", newDirectory+"testssl_result.txt"]
     run_command(cmd)
 
 
-######### lets compare the result of the last scan on this system (if existent) with the result of this scan #########
-def compare(directory):
+######### I need the directory of the last Scan made to this customer and ip-range #########
+def getLastScanDirectory(timestamp, name, range):
+    customer = "/results/" + name + "/" + range + "/"
+    cmd = ["sudo", "ls", customer]
+    result = run_command(cmd)
+    datearrayString = result.split()
+    datearrayInt = []
+
+    for val in datearrayString:
+        datearrayInt.append(datetime.strptime(val, "%d_%m_%Y--%H_%M_%S"))
+
+    return customer + min(datearrayInt, key=lambda sub: abs(sub - timestamp)).strftime("%d_%m_%Y--%H_%M_%S/")
+
+
+def compare(newDirectory, oldDirectory):
     #TODO: make a comparer
 
     #1. find the old files with the date
@@ -149,7 +162,8 @@ def main():
     repoClaim()
 
     timestamp = getTimestamp()
-    directory = checkDirectories(args.name, args.range, timestamp.strftime("%d_%m_%Y--%H_%M_%S/"))
+    oldDirectory = getLastScanDirectory(timestamp, args.name, args.range)
+    newDirectory = checkDirectories(args.name, args.range, timestamp.strftime("%d_%m_%Y--%H_%M_%S/"))
 
     #get all directories within /result/[name]/ or /result/[name]/[range]
 
@@ -158,29 +172,18 @@ def main():
 
     # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
 
-    # 2. gota make the strings to ints :/ also remove '_' and '-' in that case, make a 2d array of it?
-
-    cmd = ["sudo", "ls", "/results/" + args.name + "/" + args.range]
-    result = run_command(cmd)
-    datearrayString = result.split()
-    datearrayInt = []
-
-    for val in datearrayString:
-        datearrayInt.append(datetime.strptime(val, "%d_%m_%Y--%H_%M_%S"))
-
-    res = min(datearrayInt, key=lambda sub: abs(sub - timestamp))
-    print(res)
+    print(oldDirectory)
 
     ############ END DEBUGGING ############
 
     #fast check for ip's
-    #masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, directory)
+    masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, newDirectory)
 
-    #nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, directory)
+    nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, newDirectory)
 
-    #testssl(directory)
+    testssl(newDirectory)
 
-    #compare(directory)
+    compare(newDirectory, oldDirectory)
         
     
 if __name__ == "__main__":
