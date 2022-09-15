@@ -167,7 +167,7 @@ def main():
     datearrayInt = []
 
     for val in datearrayString:
-        datearrayInt.append(datetime.strptime(val, "%d_%m_%Y--%H_%M_%S/"))
+        datearrayInt.append(datetime.strptime(val, "%d_%m_%Y--%H_%M_%S"))
 
     res = min(datearrayInt, key=lambda sub: abs(sub - timestamp))
     print(res)
