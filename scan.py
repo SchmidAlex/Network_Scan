@@ -22,8 +22,7 @@ def repoClaim():
 ######### needed to compare differences between the scans #########
 def getTimestamp():
     print("\nCreate a timestamp we will need")
-    stamp = datetime.now()
-    return stamp.strftime("%d_%m_%Y--%H_%M_%S/")
+    return datetime.now()
 
 
 ######### lets the program check for some directories and files #########
@@ -150,7 +149,7 @@ def main():
     repoClaim()
 
     timestamp = getTimestamp()
-    directory = checkDirectories(args.name, args.range, timestamp)
+    directory = checkDirectories(args.name, args.range, timestamp.strftime("%d_%m_%Y--%H_%M_%S/"))
 
     #get all directories within /result/[name]/ or /result/[name]/[range]
 
