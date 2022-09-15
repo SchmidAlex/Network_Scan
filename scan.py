@@ -120,6 +120,7 @@ def testssl(newDirectory):
 
 ######### I need the directory of the last Scan made to this customer and ip-range #########
 def getLastScanDirectory(timestamp, name, range):
+    print("Get the directory of the last scan made:")
     customer = "/results/" + name + "/" + range + "/"
     cmd = ["sudo", "ls", customer]
     result = run_command(cmd)
@@ -171,8 +172,6 @@ def main():
     ######### ISSUES AND DEBUGGING #########
 
     # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
-
-    print(oldDirectory)
 
     ############ END DEBUGGING ############
 
