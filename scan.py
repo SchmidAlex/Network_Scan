@@ -154,8 +154,7 @@ def compare(newDirectory, oldDirectory):
     for line in difflib.unified_diff(
         oldText, newText, fromfile='oldFile.txt',
         tofile='newFile.txt', lineterm=''):
-        if line[0] in string.punctuation:
-            diffFile.write(line+"\n")
+        diffFile.write(line+"\n")
 
 
     newFile.flush()
