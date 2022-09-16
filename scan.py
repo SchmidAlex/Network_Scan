@@ -2,10 +2,12 @@
 # Author: Alex
 import argparse
 import re
+import string
 import subprocess
 import sys
 import os
 from datetime import datetime
+import difflib
 
 ######### lets the program get git repositories needed or updates #########
 def repoClaim():
@@ -74,7 +76,7 @@ def masscan(ip, tcpPorts, udpPorts, max_rate, newDirectory):
     print("\nRunning masscan 'normal' scan:")
     cmd = ["sudo", "touch", newDirectory+"masscan_result.txt"]
     run_command(cmd)
-    #those ports doesnt work :( maybe make two single scans like nmap -> TODO: Ask max
+    #those ports (udp/tcp) doesnt work :( maybe make two single scans like nmap -> TODO: Ask max
     cmd = ["sudo", "masscan", "-e", "eth0", "--top-ports " + tcpPorts + ",U:" + udpPorts, "--max-rate", str(max_rate), "--interactive", ip]
     output = run_command(cmd)
     outfile = open(newDirectory+"masscan_result.txt", "at")
@@ -118,6 +120,11 @@ def testssl(newDirectory):
     run_command(cmd)
 
 
+def ovaTest(newDirectory):
+    #TODO: let OVA test the ip's and output the result into a file
+    print("todo")
+
+
 ######### I need the directory of the last Scan made to this customer and ip-range #########
 def getLastScanDirectory(timestamp, name, range):
     print("Get the directory of the last scan made:")
@@ -134,12 +141,36 @@ def getLastScanDirectory(timestamp, name, range):
 
 
 def compare(newDirectory, oldDirectory):
-    #TODO: make a comparer
+    cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
+    run_command(cmd)
 
-    #1. find the old files with the date
-    #2. read the old and the new files
-    #3. extract the difference -> not just new, but also things that are missing
-    #4. write those differences in a new file (something like diff.txt)
+    newFile = open(newDirectory+"nmap_result_tcp.txt", "at")
+    oldFile = open(oldDirectory+"nmap_result_tcp.txt", "at")
+    diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
+
+    newText = newFile.readlines()
+    oldText = oldFile.readlines()
+    
+    for line in difflib.unified_diff(
+        oldText, newText, fromfile='oldFile.txt',
+        tofile='newFile.txt', lineterm=''):
+        if line[0] in string.punctuation:
+            diffFile.write(line+"\n")
+
+
+    newFile.flush()
+    newFile.close()
+    oldFile.flush()
+    oldFile.close()
+    diffFile.flush()
+    diffFile.close()
+
+
+    # cmd = ["sudo", "touch", newDirectory+"nmap_result_tcp.txt"]
+    # cmd = ["sudo", "touch", newDirectory+"nmap_result_fortestssl.txt"]
+    # cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
+    # cmd = ["sudo", "touch", newDirectory+"masscan_result.txt"]
+    # newDirectory+"testssl_result.txt"
 
     print("TODO")
 
@@ -166,21 +197,22 @@ def main():
     oldDirectory = getLastScanDirectory(timestamp, args.name, args.range)
     newDirectory = checkDirectories(args.name, args.range, timestamp.strftime("%d_%m_%Y--%H_%M_%S/"))
 
-    #get all directories within /result/[name]/ or /result/[name]/[range]
-
 
     ######### ISSUES AND DEBUGGING #########
 
     # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
+    # 2. testssl stops after testing SMTP ports...
 
     ############ END DEBUGGING ############
 
-    #fast check for ip's
+
     masscan(args.IP, args.tcp_ports, args.udp_ports, args.max_rate, newDirectory)
 
     nmap(args.IP, args.tcp_ports, args.udp_ports, args.delay, newDirectory)
 
     testssl(newDirectory)
+
+    ovaTest(newDirectory)
 
     compare(newDirectory, oldDirectory)
         
