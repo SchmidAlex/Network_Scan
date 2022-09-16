@@ -194,8 +194,8 @@ def main():
     repoClaim()
 
     timestamp = getTimestamp()
-    oldDirectory = getLastScanDirectory(timestamp, args.name, args.range)
     newDirectory = checkDirectories(args.name, args.range, timestamp.strftime("%d_%m_%Y--%H_%M_%S/"))
+    oldDirectory = getLastScanDirectory(timestamp, args.name, args.range)
 
 
     ######### ISSUES AND DEBUGGING #########
