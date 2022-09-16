@@ -144,12 +144,12 @@ def compare(newDirectory, oldDirectory):
     cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
     run_command(cmd)
 
-    newFile = open(newDirectory+"nmap_result_tcp.txt", "at")
+    newFile = open(newDirectory+"nmap_result_tcp.txt", "r")
     newText = newFile.readlines()
     newFile.flush()
     newFile.close()
 
-    oldFile = open(oldDirectory+"nmap_result_tcp.txt", "at")
+    oldFile = open(oldDirectory+"nmap_result_tcp.txt", "r")
     oldText = oldFile.readlines()
     oldFile.flush()
     oldFile.close()
