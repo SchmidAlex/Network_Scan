@@ -144,23 +144,21 @@ def compare(newDirectory, oldDirectory):
     cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
     run_command(cmd)
 
-    newFile = open(newDirectory+"nmap_result_tcp.txt", "r")
-    newText = newFile.readlines()
-    newFile.flush()
-    newFile.close()
-
-    oldFile = open(oldDirectory+"nmap_result_tcp.txt", "r")
-    oldText = oldFile.readlines()
-    oldFile.flush()
-    oldFile.close()
-
     diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
-    
-    for line in difflib.unified_diff(
-        oldText, newText, fromfile='oldFile.txt',
-        tofile='newFile.txt', lineterm=''):
-        if line[0] in string.punctuation:
-            diffFile.write(line+"\n")
+
+    with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
+            newFileText = newFile.readlines()
+    with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
+            oldFileText = oldFile.readlines()
+
+    diff = difflib.unified_diff(
+        oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
+    )
+
+    for line in diff:
+        print(line)
+
+    diffFile.write("test");
 
     diffFile.flush()
     diffFile.close()
