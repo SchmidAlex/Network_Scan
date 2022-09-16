@@ -99,8 +99,8 @@ def nmap(ip, tcpPorts, udpPorts, delay, newDirectory):
     run_command(cmd)
 
     # Scan top given UDP ports with nmap -> it takes ages to run this
-    cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", ip]
-    run_command(cmd)
+    # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", ip]
+    # run_command(cmd)
 
 
 ######### lets the programm check all ssl connections with the script testssl.sh #########
