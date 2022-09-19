@@ -2,14 +2,12 @@
 # Author: Alex
 import argparse
 import re
-import string
+#import string
 import subprocess
 import sys
 import os
 from datetime import datetime
 import difflib
-
-import random
 
 ######### lets the program get git repositories needed or updates #########
 def repoClaim():
@@ -100,7 +98,7 @@ def nmap(ip, tcpPorts, udpPorts, delay, newDirectory):
     cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", ip]
     run_command(cmd)
 
-    # Scan top given UDP ports with nmap -> it takes ages to run this
+    # Scan top given UDP ports with nmap -> it takes ages to run this TODO: uncomment it when testing is done
     # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", ip]
     # run_command(cmd)
 
@@ -133,13 +131,17 @@ def getLastScanDirectory(timestamp, name, range):
     customer = "/results/" + name + "/" + range + "/"
     cmd = ["sudo", "ls", customer]
     result = run_command(cmd)
-    datearrayString = result.split()
-    datearrayInt = []
 
-    for val in datearrayString:
-        datearrayInt.append(datetime.strptime(val, "%d_%m_%Y--%H_%M_%S"))
+    if result:
+        datearrayString = result.split()
+        datearrayInt = []
 
-    return customer + min(datearrayInt, key=lambda sub: abs(sub - timestamp)).strftime("%d_%m_%Y--%H_%M_%S/")
+        for val in datearrayString:
+            datearrayInt.append(datetime.strptime(val, "%d_%m_%Y--%H_%M_%S"))
+
+        return customer + min(datearrayInt, key=lambda sub: abs(sub - timestamp)).strftime("%d_%m_%Y--%H_%M_%S/")
+    else:
+        return None
 
 
 def compare(newDirectory, oldDirectory):
@@ -220,7 +222,8 @@ def main():
 
     ovaTest(newDirectory)
 
-    compare(newDirectory, oldDirectory)
+    if oldDirectory:
+        compare(newDirectory, oldDirectory)
         
     
 if __name__ == "__main__":
