@@ -160,7 +160,7 @@ def compare(newDirectory, oldDirectory):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(10))
 
-    diffFile.write()
+    diffFile.write(result_str)
 
     print(diff)
 
