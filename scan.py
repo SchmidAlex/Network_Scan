@@ -155,7 +155,10 @@ def compare(newDirectory, oldDirectory):
         oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
     )
 
+    print(diff)
+
     for line in diff:
+        # I dont get any results here :/ but why?
         print(line)
         diffFile.write(line + "\n")
 
