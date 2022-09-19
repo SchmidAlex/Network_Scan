@@ -157,8 +157,9 @@ def compare(newDirectory, oldDirectory):
 
     for line in diff:
         print(line)
+        diffFile.write(line + "\n")
 
-    diffFile.write("test");
+    diffFile.write("test")
 
     diffFile.flush()
     diffFile.close()
@@ -169,8 +170,6 @@ def compare(newDirectory, oldDirectory):
     # cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
     # cmd = ["sudo", "touch", newDirectory+"masscan_result.txt"]
     # newDirectory+"testssl_result.txt"
-
-    print("TODO")
 
 
 
