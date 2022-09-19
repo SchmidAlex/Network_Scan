@@ -149,18 +149,21 @@ def compare(newDirectory, oldDirectory):
     diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
 
     with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
+            letters = string.ascii_lowercase
+            result_str = ''.join(random.choice(letters) for i in range(10))
+            newFile.write(result_str)
             newFileText = newFile.readlines()
     with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
+            letters = string.ascii_lowercase
+            result_str = ''.join(random.choice(letters) for i in range(10))
+            oldFile.write(result_str)
             oldFileText = oldFile.readlines()
 
     diff = difflib.unified_diff(
         oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
     )
 
-    letters = string.ascii_lowercase
-    result_str = ''.join(random.choice(letters) for i in range(10))
-
-    diffFile.write(result_str)
+    #maybe json and deepdiff
 
     print(diff)
 
