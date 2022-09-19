@@ -9,6 +9,8 @@ import os
 from datetime import datetime
 import difflib
 
+import random
+
 ######### lets the program get git repositories needed or updates #########
 def repoClaim():
     print("\nFunction repoClaim is running. If there is a newer version of this script it will be updated:")
@@ -154,6 +156,11 @@ def compare(newDirectory, oldDirectory):
     diff = difflib.unified_diff(
         oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
     )
+
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(10))
+
+    diffFile.write()
 
     print(diff)
 
