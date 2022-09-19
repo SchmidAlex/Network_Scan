@@ -149,14 +149,8 @@ def compare(newDirectory, oldDirectory):
     diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
 
     with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
-            letters = string.ascii_lowercase
-            result_str = ''.join(random.choice(letters) for i in range(10))
-            newFile.write(result_str)
             newFileText = newFile.readlines()
     with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
-            letters = string.ascii_lowercase
-            result_str = ''.join(random.choice(letters) for i in range(10))
-            oldFile.write(result_str)
             oldFileText = oldFile.readlines()
 
     diff = difflib.unified_diff(
@@ -164,6 +158,8 @@ def compare(newDirectory, oldDirectory):
     )
 
     #maybe json and deepdiff
+    # TODO: the issue is clear now... cleanup the debugg and have a look on the timings... the diffreader gets 2 times the newest directory somehow...
+    # Well still gota do the cleanup, but the directory should be right now -> test it
 
     print(diff)
 
@@ -204,8 +200,8 @@ def main():
     repoClaim()
 
     timestamp = getTimestamp()
-    newDirectory = checkDirectories(args.name, args.range, timestamp.strftime("%d_%m_%Y--%H_%M_%S/"))
     oldDirectory = getLastScanDirectory(timestamp, args.name, args.range)
+    newDirectory = checkDirectories(args.name, args.range, timestamp.strftime("%d_%m_%Y--%H_%M_%S/"))
 
 
     ######### ISSUES AND DEBUGGING #########
