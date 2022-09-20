@@ -228,7 +228,7 @@ def main():
         from deepdiff import DeepDiff
     except ImportError as e:
         print("\nDeepdiff not installed, installing deepdiff")
-        cmd = ["sudo", "pip", "install", "deepdiff"]
+        cmd = ["sudo", "pip", "install", "--user", "deepdiff"]
         run_command(cmd)
         from deepdiff import DeepDiff
 
