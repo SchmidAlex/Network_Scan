@@ -2,12 +2,11 @@
 # Author: Alex
 import argparse
 import re
-#import string
 import subprocess
 import sys
 import os
 from datetime import datetime
-import difflib
+import json
 
 ######### lets the program get git repositories needed or updates #########
 def repoClaim():
@@ -19,6 +18,12 @@ def repoClaim():
     else:
         cmd = ["sudo", "git", "-C", "/Network_Scan", "pull"]
         run_command(cmd)
+
+
+######### check for needed dependencies #########
+def getDependencies():
+    print('TODO: dependenciechecker')
+
 
 
 ######### needed to compare differences between the scans #########
@@ -95,11 +100,11 @@ def nmap(ip, tcpPorts, udpPorts, delay, newDirectory):
     cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
 
     # Scan top given TCP ports with nmap
-    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", ip]
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", "-oJ", newDirectory+"nmap_json.json", ip]
     run_command(cmd)
 
     # Scan top given UDP ports with nmap -> it takes ages to run this TODO: uncomment it when testing is done
-    # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", ip]
+    # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", "-oJ", newDirectory+"nmap_json.json", ip]
     # run_command(cmd)
 
 
@@ -145,35 +150,53 @@ def getLastScanDirectory(timestamp, name, range):
 
 
 def compare(newDirectory, oldDirectory):
-    cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
+    # cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
+    # run_command(cmd)
+
+    # diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
+
+    # with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
+    #         newFileText = newFile.readlines()
+    # with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
+    #         oldFileText = oldFile.readlines()
+
+    # diff = difflib.unified_diff(
+    #     oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
+    # )
+
+    # print(diff)
+
+    # for line in diff:
+    #     # I dont get any results here :/ but why?
+    #     print(line)
+    #     diffFile.write(line + "\n")
+
+    # diffFile.write("test")
+
+    # diffFile.flush()
+    # diffFile.close()
+    # its cool... but, not really readable, so we gona go with json data if possible
+
+    cmd = ["sudo", "touch", newDirectory + "diff.txt"]
     run_command(cmd)
 
-    diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
+    newFile = open(newDirectory + "nmap_json.json")
+    oldFile = open(oldDirectory + "nmap_json.json")
+    
+    newJson = json.load(newFile)
+    oldJson = json.load(oldFile)
 
-    with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
-            newFileText = newFile.readlines()
-    with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
-            oldFileText = oldFile.readlines()
+    tcpDiffResultNmap = DeepDipp(oldJson, newJson)
 
-    diff = difflib.unified_diff(
-        oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
-    )
+    print(tcpDiffResultNmap)
 
-    #maybe json and deepdiff
-    # TODO: the issue is clear now... cleanup the debugg and have a look on the timings... the diffreader gets 2 times the newest directory somehow...
-    # Well still gota do the cleanup, but the directory should be right now -> test it
-
-    print(diff)
-
-    for line in diff:
-        # I dont get any results here :/ but why?
-        print(line)
-        diffFile.write(line + "\n")
-
-    diffFile.write("test")
-
+    diffFile = open(newDirectory+"masscan_result.txt", "at")
+    diffFile.write(tcpDiffResultNmap)
     diffFile.flush()
     diffFile.close()
+
+
+    #maybe json and deepdiff
 
 
     # cmd = ["sudo", "touch", newDirectory+"nmap_result_tcp.txt"]
@@ -200,6 +223,14 @@ def main():
     args = parser.parse_args()
 
     repoClaim()
+    
+    try:
+        from deepdiff import DeepDiff
+    except ImportError as e:
+        print("\nDeepdiff not installed, installing deepdiff")
+        cmd = ["sudo", "pip", "install", "deepdiff"]
+        run_command(cmd)
+        from deepdiff import DeepDiff
 
     timestamp = getTimestamp()
     oldDirectory = getLastScanDirectory(timestamp, args.name, args.range)
