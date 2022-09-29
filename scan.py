@@ -22,7 +22,7 @@ def repoClaim():
 
 ######### check for needed dependencies #########
 def getDependencies():
-    print('TODO: dependenciechecker when needed')
+    print('TODO: dependenciechecker when needed so just maybe')
 
 
 
@@ -174,8 +174,6 @@ def compare(newDirectory, oldDirectory):
         else:
             print("not written: " + line + "\n")
 
-    diffFile.write("test")
-
     diffFile.flush()
     diffFile.close()
 
@@ -204,14 +202,6 @@ def main():
     args = parser.parse_args()
 
     repoClaim()
-    
-    try:
-        from deepdiff import DeepDiff
-    except ImportError as e:
-        print("\nDeepdiff not installed, installing deepdiff")
-        cmd = ["sudo", "pip", "install", "--user", "deepdiff"]
-        run_command(cmd)
-        from deepdiff import DeepDiff
 
     timestamp = getTimestamp()
     oldDirectory = getLastScanDirectory(timestamp, args.name, args.range)
