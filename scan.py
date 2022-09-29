@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # Author: Alex
 import argparse
+import difflib
 import re
 import subprocess
 import sys
 import os
 from datetime import datetime
-import json
 
 ######### lets the program get git repositories needed or updates #########
 def repoClaim():
@@ -22,7 +22,7 @@ def repoClaim():
 
 ######### check for needed dependencies #########
 def getDependencies():
-    print('TODO: dependenciechecker')
+    print('TODO: dependenciechecker when needed')
 
 
 
@@ -100,7 +100,7 @@ def nmap(ip, tcpPorts, udpPorts, delay, newDirectory):
     cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
 
     # Scan top given TCP ports with nmap
-    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", "-oJ", newDirectory+"nmap_json.json", ip]
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", ip]
     run_command(cmd)
 
     # Scan top given UDP ports with nmap -> it takes ages to run this TODO: uncomment it when testing is done
@@ -150,53 +150,34 @@ def getLastScanDirectory(timestamp, name, range):
 
 
 def compare(newDirectory, oldDirectory):
-    # cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
-    # run_command(cmd)
-
-    # diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
-
-    # with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
-    #         newFileText = newFile.readlines()
-    # with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
-    #         oldFileText = oldFile.readlines()
-
-    # diff = difflib.unified_diff(
-    #     oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
-    # )
-
-    # print(diff)
-
-    # for line in diff:
-    #     # I dont get any results here :/ but why?
-    #     print(line)
-    #     diffFile.write(line + "\n")
-
-    # diffFile.write("test")
-
-    # diffFile.flush()
-    # diffFile.close()
-    # its cool... but, not really readable, so we gona go with json data if possible
-
-    cmd = ["sudo", "touch", newDirectory + "diff.txt"]
+    cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
     run_command(cmd)
 
-    newFile = open(newDirectory + "nmap_json.json")
-    oldFile = open(oldDirectory + "nmap_json.json")
-    
-    newJson = json.load(newFile)
-    oldJson = json.load(oldFile)
+    diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
 
-    tcpDiffResultNmap = DeepDipp(oldJson, newJson)
+    with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
+            newFileText = newFile.readlines()
+    with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
+            oldFileText = oldFile.readlines()
 
-    print(tcpDiffResultNmap)
+    diff = difflib.unified_diff(
+        oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
+    )
 
-    diffFile = open(newDirectory+"masscan_result.txt", "at")
-    diffFile.write(tcpDiffResultNmap)
+    print(diff)
+
+    for line in diff:
+        if line.startswith("-"):
+            diffFile.write(line + "\n")
+        elif line.startswith("+"):
+            diffFile.write(line + "\n")
+        else:
+            print("not written: " + line + "\n")
+
+    diffFile.write("test")
+
     diffFile.flush()
     diffFile.close()
-
-
-    #maybe json and deepdiff
 
 
     # cmd = ["sudo", "touch", newDirectory+"nmap_result_tcp.txt"]
