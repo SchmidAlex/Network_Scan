@@ -192,7 +192,7 @@ def compare(newDirectory, oldDirectory):
     newTree = elementTree.parse(newDirectory+"nmap_result_xml.xml")
     oldTree = elementTree.parse(oldDirectory+"nmap_result_xml.xml")
 
-    print(newTree.nmaprun.host)
+    print(newTree)
 
     #for elements in newTree.nmaprun.host:
         
