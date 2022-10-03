@@ -237,8 +237,8 @@ def main():
 
     ovaTest(newDirectory)
 
-    #if oldDirectory:
-        #compare(newDirectory, oldDirectory)
+    if oldDirectory:
+        compare(newDirectory, oldDirectory)
         
     
 if __name__ == "__main__":
