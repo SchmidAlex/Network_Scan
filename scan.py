@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # Author: Alex
 import argparse
-import difflib
+#import difflib
 import re
 import subprocess
 import sys
 import os
 from datetime import datetime
+import xml.etree.ElementTree as elementTree
 
 ######### lets the program get git repositories needed or updates #########
 def repoClaim():
@@ -99,13 +100,20 @@ def nmap(ip, tcpPorts, udpPorts, delay, newDirectory):
     cmd = ["sudo", "touch", newDirectory+"nmap_result_fortestssl.txt"]
     cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
 
-    # Scan top given TCP ports with nmap
-    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", ip]
+    # # Scan top given TCP ports with nmap
+    # cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", ip]
+    # run_command(cmd)
+
+    # # Scan top given UDP ports with nmap -> it takes ages to run this TODO: uncomment it when testing is done
+    # # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", ip]
+    # # run_command(cmd)
+
+
+    # the lines above works correct, i commented it out and made a new one for testing xml output
+    cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", "-oX", newDirectory+"nmap_result_xml.xml", ip]
     run_command(cmd)
 
-    # Scan top given UDP ports with nmap -> it takes ages to run this TODO: uncomment it when testing is done
-    # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", "-oJ", newDirectory+"nmap_json.json", ip]
-    # run_command(cmd)
+
 
 
 ######### lets the programm check all ssl connections with the script testssl.sh #########
@@ -150,39 +158,39 @@ def getLastScanDirectory(timestamp, name, range):
 
 
 def compare(newDirectory, oldDirectory):
+    # cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
+    # run_command(cmd)
+
+    # diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
+
+    # with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
+    #         newFileText = newFile.readlines()
+    # with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
+    #         oldFileText = oldFile.readlines()
+
+    # diff = difflib.unified_diff(
+    #     oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
+    # )
+
+    # for line in diff:
+    #     if line.startswith("-"):
+    #         diffFile.write(line + "\n")
+    #     elif line.startswith("+"):
+    #         diffFile.write(line + "\n")
+    #     else:
+    #         print("not written: " + line + "\n")
+
+    # diffFile.flush()
+    # diffFile.close()
+
+    # The code above works... but it isnt really beatifull, thats why i try it with XML below
+    ##########################################################################################
+
     cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
     run_command(cmd)
 
-    diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
-
-    with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
-            newFileText = newFile.readlines()
-    with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
-            oldFileText = oldFile.readlines()
-
-    diff = difflib.unified_diff(
-        oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
-    )
-
-    print(diff)
-
-    for line in diff:
-        if line.startswith("-"):
-            diffFile.write(line + "\n")
-        elif line.startswith("+"):
-            diffFile.write(line + "\n")
-        else:
-            print("not written: " + line + "\n")
-
-    diffFile.flush()
-    diffFile.close()
-
-
-    # cmd = ["sudo", "touch", newDirectory+"nmap_result_tcp.txt"]
-    # cmd = ["sudo", "touch", newDirectory+"nmap_result_fortestssl.txt"]
-    # cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
-    # cmd = ["sudo", "touch", newDirectory+"masscan_result.txt"]
-    # newDirectory+"testssl_result.txt"
+    newTree = elementTree.parse(newDirectory+"nmap_result_xml.xml")
+    oldTree = elementTree.parse(oldDirectory+"nmap_result_xml.xml")
 
 
 
@@ -224,8 +232,8 @@ def main():
 
     ovaTest(newDirectory)
 
-    if oldDirectory:
-        compare(newDirectory, oldDirectory)
+    #if oldDirectory:
+        #compare(newDirectory, oldDirectory)
         
     
 if __name__ == "__main__":
