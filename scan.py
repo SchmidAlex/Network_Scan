@@ -192,13 +192,18 @@ def compare(newDirectory, oldDirectory):
     newTree = elementTree.parse(newDirectory+"nmap_result_xml.xml")
     oldTree = elementTree.parse(oldDirectory+"nmap_result_xml.xml")
 
+    # i was here 
     newRoot = newTree.getroot()
-    for child in newRoot:
-        print(child)
-    
-    # print(newTree)# -> <xml.etree.ElementTree.ElementTree object at 0x7fae95d8b7f0>
-
-    #for elements in newTree.nmaprun.host:
+    for child in newRoot.findall("host"):
+        for host in child.findall("address"):
+            if host.attrib['addrtype'] == 'ipv4':
+                print("Result for the " + host.tag + " " + host.attrib['addr'] + "\n")
+            for ports in host.findall('ports'):
+                for port in ports.findall('port'):
+                    if port.find('state'):
+                        if port.find('state').attrib['state'] == 'open':
+                            print(port.find('state').attrib + "\n")
+                            print(port.find('service').attrib['service'] + "\n")
         
 
 
