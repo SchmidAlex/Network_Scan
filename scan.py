@@ -199,14 +199,14 @@ def compare(newDirectory, oldDirectory):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
                 print("Result for the " + host.tag + " " + host.attrib['addr'] + "\n")
-            for ports in host.findall('ports'):
-                print("im here for ports in host.find(ports)")
-                for port in ports.findall('port'):
-                    print("for port in ports.find(port)")
-                    if port.find('state'):
-                        if port.find('state').attrib['state'] == 'open':
-                            print(port.find('state').attrib + "\n")
-                            print(port.find('service').attrib['service'] + "\n")
+                for ports in host.findall('ports'):
+                    print("im here for ports in host.find(ports)")
+                    for port in ports.findall('port'):
+                        print("for port in ports.find(port)")
+                        if port.find('state'):
+                            if port.find('state').attrib['state'] == 'open':
+                                print(port.find('state').attrib + "\n")
+                                print(port.find('service').attrib['service'] + "\n")
         
 
 
