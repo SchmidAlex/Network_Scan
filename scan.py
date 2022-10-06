@@ -192,14 +192,17 @@ def compare(newDirectory, oldDirectory):
     newTree = elementTree.parse(newDirectory+"nmap_result_xml.xml")
     oldTree = elementTree.parse(oldDirectory+"nmap_result_xml.xml")
 
-    # i was here 
+    # i was here and this is the result: print("Result for the " + host.tag + " " + host.attrib['addr'] + "\n") further the script didnt came...
+    # pretty sure it was an if-condition
     newRoot = newTree.getroot()
     for child in newRoot.findall("host"):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
                 print("Result for the " + host.tag + " " + host.attrib['addr'] + "\n")
             for ports in host.findall('ports'):
+                print("im here for ports in host.find(ports)")
                 for port in ports.findall('port'):
+                    print("for port in ports.find(port)")
                     if port.find('state'):
                         if port.find('state').attrib['state'] == 'open':
                             print(port.find('state').attrib + "\n")
