@@ -124,9 +124,7 @@ def testssl(newDirectory):
         cmd = ["sudo", "git", "clone", "https://github.com/drwetter/testssl.sh", "/testssl"]
         run_command(cmd)
     else:
-        cmd = ["sudo", "cd", "/testssl"]
-        run_command(cmd)
-        cmd = ["sudo", "git", "pull"]
+        cmd = ["sudo", "git", "-C", "/testssl", "pull"]
         run_command(cmd)
 
     cmd = ["sudo", "/testssl/testssl.sh", "--file", newDirectory+"nmap_result_fortestssl.txt", "-oL", newDirectory+"testssl_result.txt"]
@@ -205,8 +203,8 @@ def compare(newDirectory, oldDirectory):
                 # i did come into this loop,
                 # works fine till here
                 if port.find('state').attrib['state'] == 'open':
-                    print(str(port.find('state').attrib) + "\n")
-                    print(str(port.find('service').attrib['service']) + "\n")
+                    print(str(port.find('state').attrib['state']) + "\n")
+                    print(str(port.find('service').attrib['name']) + "\n")
         
 
 
