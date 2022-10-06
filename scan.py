@@ -202,6 +202,7 @@ def compare(newDirectory, oldDirectory):
             for port in ports.findall('port'):
                 # i did come into this loop,
                 # works fine till here
+                print(str(port.attrib['protocol']) + "/" + str(port.attrib['portid']))
                 if port.find('state').attrib['state'] == 'open':
                     print(str(port.find('state').attrib['state']) + "\n")
                     print(str(port.find('service').attrib['name']) + "\n")
