@@ -200,10 +200,12 @@ def compare(newDirectory, oldDirectory):
             if host.attrib['addrtype'] == 'ipv4':
                 print("Result for the " + host.tag + " " + host.attrib['addr'] + "\n")
         for ports in child.findall('ports'):
-            print("im here for ports in host.find(ports)")
+            # i did come into this loop
             for port in ports.findall('port'):
-                print("for port in ports.find(port)")
+                # i did come into this loop,
+                # works fine till here
                 if port.find('state'):
+                    print("if condition check")
                     if port.find('state').attrib['state'] == 'open':
                         print(port.find('state').attrib + "\n")
                         print(port.find('service').attrib['service'] + "\n")
