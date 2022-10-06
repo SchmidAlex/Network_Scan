@@ -205,8 +205,8 @@ def compare(newDirectory, oldDirectory):
                 # i did come into this loop,
                 # works fine till here
                 if port.find('state').attrib['state'] == 'open':
-                    print(port.find('state').attrib + "\n")
-                    print(port.find('service').attrib['service'] + "\n")
+                    print(str(port.find('state').attrib) + "\n")
+                    print(str(port.find('service').attrib['service']) + "\n")
         
 
 
