@@ -210,7 +210,7 @@ def compare(newDirectory, oldDirectory):
                     newTreeFinding[i][tempHost] = {
                         'port': str(port.attrib['portid']),
                         'protocol': str(port.attrib['protocol']),
-                        'state': str(port.attrib['state']),
+                        'staterino': str(port.attrib['state']),
                         'name': str(port.attrib['name'])
                     }
                     i += 1
