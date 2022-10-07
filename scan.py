@@ -203,7 +203,7 @@ def compare(newDirectory, oldDirectory):
                 print(str(port.attrib['protocol']) + "/" + str(port.attrib['portid']))
                 if port.find('state').attrib['state'] == 'open':
                     # i was working here
-                    newTreeFinding[host.attrib['addr']]['port'] = str(port.attrib['portid'])
+                    newTreeFinding[host.attrib['addr']].append(str(port.attrib['portid']))
                     newTreeFinding[host.attrib['addr']][port.attrib['portid']].append(str(port.attrib['protocol']))
                     newTreeFinding[host.attrib['addr']][port.attrib['portid']]['state'].append(str(port.attrib['state']))
                     newTreeFinding[host.attrib['addr']][port.attrib['portid']]['name'].append(str(port.attrib['name']))
