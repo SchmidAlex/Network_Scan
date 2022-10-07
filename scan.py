@@ -207,12 +207,12 @@ def compare(newDirectory, oldDirectory):
                 print(str(port.attrib['protocol']) + "/" + str(port.attrib['portid']))
                 if port.find('state').attrib['state'] == 'open':
                     # i was working here
-                    newTreeFinding[i][tempHost] = {
+                    newTreeFinding[i][tempHost].append({
                         'port': str(port.attrib['portid']),
                         'protocol': str(port.attrib['protocol']),
                         'state': str(port.find('state').attrib['state']),
                         'name': str(port.find('service').attrib['name'])
-                    }
+                    })
         i += 1
     print(newTreeFinding)
         
