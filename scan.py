@@ -211,7 +211,7 @@ def compare(newDirectory, oldDirectory):
                         'port': str(port.attrib['portid']),
                         'protocol': str(port.attrib['protocol']),
                         'state': str(port.find('state').attrib['state']),
-                        'name': str(port.attrib['name'])
+                        'name': str(port.find('service').attrib['name'])
                     }
                     i += 1
     print(newTreeFinding)
