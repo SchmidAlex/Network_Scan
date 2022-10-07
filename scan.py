@@ -193,20 +193,27 @@ def compare(newDirectory, oldDirectory):
     oldTree = elementTree.parse(oldDirectory+"nmap_result_xml.xml")
     oldTreeFinding = []
 
+    i = 0
+    tempHost = None
+
     newRoot = newTree.getroot()
     for child in newRoot.findall("host"):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
-                newTreeFinding.append(str(host.attrib['addr']))
+                newTreeFinding[i] = {'host': str(host.attrib['addr']), str(host.attrib['addr']): []}
+                tempHost = str(host.attrib['addr'])
         for ports in child.findall('ports'):
             for port in ports.findall('port'):
                 print(str(port.attrib['protocol']) + "/" + str(port.attrib['portid']))
                 if port.find('state').attrib['state'] == 'open':
                     # i was working here
-                    newTreeFinding[host.attrib['addr']].append(str(port.attrib['portid']))
-                    newTreeFinding[host.attrib['addr']][port.attrib['portid']].append(str(port.attrib['protocol']))
-                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['state'].append(str(port.attrib['state']))
-                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['name'].append(str(port.attrib['name']))
+                    newTreeFinding[i][tempHost] = {
+                        'port': str(port.attrib['portid']),
+                        'protocol': str(port.attrib['protocol']),
+                        'state': str(port.attrib['state']),
+                        'name': str(port.attrib['name'])
+                    }
+                    i += 1
     print(newTreeFinding)
         
 
