@@ -188,24 +188,26 @@ def compare(newDirectory, oldDirectory):
     run_command(cmd)
 
     newTree = elementTree.parse(newDirectory+"nmap_result_xml.xml")
-    oldTree = elementTree.parse(oldDirectory+"nmap_result_xml.xml")
+    newTreeFinding = []
 
-    # i was here and this is the result: print("Result for the " + host.tag + " " + host.attrib['addr'] + "\n") further the script didnt came...
-    # pretty sure it was an if-condition
+    oldTree = elementTree.parse(oldDirectory+"nmap_result_xml.xml")
+    oldTreeFinding = []
+
     newRoot = newTree.getroot()
     for child in newRoot.findall("host"):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
-                print("Result for the " + host.tag + " " + host.attrib['addr'] + "\n")
+                newTreeFinding['host'] = host.attrib['addr']
         for ports in child.findall('ports'):
-            # i did come into this loop
             for port in ports.findall('port'):
-                # i did come into this loop,
-                # works fine till here
                 print(str(port.attrib['protocol']) + "/" + str(port.attrib['portid']))
                 if port.find('state').attrib['state'] == 'open':
-                    print(str(port.find('state').attrib['state']) + "\n")
-                    print(str(port.find('service').attrib['name']) + "\n")
+                    # i was working here
+                    newTreeFinding[host.attrib['addr']]['port'] = str(port.attrib['portid'])
+                    newTreeFinding[host.attrib['addr']][str(port.attrib['portid'])]['protocol'] = str(port.attrib['protocol'])
+                    newTreeFinding[host.attrib['addr']][str(port.attrib['portid'])]['state'] = str(port.attrib['state'])
+                    newTreeFinding[host.attrib['addr']][str(port.attrib['portid'])]['name'] = str(port.attrib['name'])
+    print(newTreeFinding)
         
 
 
