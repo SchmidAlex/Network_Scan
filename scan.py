@@ -204,9 +204,9 @@ def compare(newDirectory, oldDirectory):
                 if port.find('state').attrib['state'] == 'open':
                     # i was working here
                     newTreeFinding[host.attrib['addr']]['port'] = str(port.attrib['portid'])
-                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['protocol'] = str(port.attrib['protocol'])
-                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['state'] = str(port.attrib['state'])
-                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['name'] = str(port.attrib['name'])
+                    newTreeFinding[host.attrib['addr']][port.attrib['portid']].append(str(port.attrib['protocol']))
+                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['state'].append(str(port.attrib['state']))
+                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['name'].append(str(port.attrib['name']))
     print(newTreeFinding)
         
 
