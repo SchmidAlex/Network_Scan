@@ -197,16 +197,16 @@ def compare(newDirectory, oldDirectory):
     for child in newRoot.findall("host"):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
-                newTreeFinding['host'] = host.attrib['addr']
+                newTreeFinding.append(str(host.attrib['addr']))
         for ports in child.findall('ports'):
             for port in ports.findall('port'):
                 print(str(port.attrib['protocol']) + "/" + str(port.attrib['portid']))
                 if port.find('state').attrib['state'] == 'open':
                     # i was working here
                     newTreeFinding[host.attrib['addr']]['port'] = str(port.attrib['portid'])
-                    newTreeFinding[host.attrib['addr']][str(port.attrib['portid'])]['protocol'] = str(port.attrib['protocol'])
-                    newTreeFinding[host.attrib['addr']][str(port.attrib['portid'])]['state'] = str(port.attrib['state'])
-                    newTreeFinding[host.attrib['addr']][str(port.attrib['portid'])]['name'] = str(port.attrib['name'])
+                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['protocol'] = str(port.attrib['protocol'])
+                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['state'] = str(port.attrib['state'])
+                    newTreeFinding[host.attrib['addr']][port.attrib['portid']]['name'] = str(port.attrib['name'])
     print(newTreeFinding)
         
 
