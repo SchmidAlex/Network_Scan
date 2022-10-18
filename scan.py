@@ -204,7 +204,6 @@ def compare(newDirectory, oldDirectory):
                 tempHost = str(host.attrib['addr'])
         for ports in child.findall('ports'):
             for port in ports.findall('port'):
-                print(str(port.attrib['protocol']) + "/" + str(port.attrib['portid']))
                 if port.find('state').attrib['state'] == 'open':
                     # i was working here
                     newTreeFinding[i][tempHost].append({
@@ -226,9 +225,7 @@ def compare(newDirectory, oldDirectory):
                 tempHost = str(host.attrib['addr'])
         for ports in child.findall('ports'):
             for port in ports.findall('port'):
-                print(str(port.attrib['protocol']) + "/" + str(port.attrib['portid']))
                 if port.find('state').attrib['state'] == 'open':
-                    # i was working here
                     oldTreeFinding[i][tempHost].append({
                         'port': str(port.attrib['portid']),
                         'protocol': str(port.attrib['protocol']),
@@ -237,10 +234,11 @@ def compare(newDirectory, oldDirectory):
                     })
         i += 1
 
-    print("this is the old result:")
-    print(oldTreeFinding)
-    print("this is the new result:")
-    print(newTreeFinding)
+    for host in newTreeFinding['host']:
+        print(host)
+        for oldHost in oldTreeFinding['host']:
+            if host == oldHost:
+                print("its a match")
         
 
 
