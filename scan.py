@@ -239,7 +239,7 @@ def compare(newDirectory, oldDirectory):
             if host['host'] in oldHost.values():
                 for port in host[host['host']]:
                     for oldPort in oldHost[host['host']]:
-                        if port['port'] in oldPort.values() and port['protocol'] in oldPort.values():
+                        if port['port'] in oldPort['port'] and port['protocol'] in oldPort['protocol']:
                             pass
                         else:
                             #write port, protocol and name into the difference file
