@@ -240,8 +240,10 @@ def compare(newDirectory, oldDirectory):
                 # We found the same host in the new scan as in the old
                 for port in host[host['host']]:
                     for oldPort in oldHost[oldHost['host']]:
-                        print(type(port))
-                        print(type(oldPort))
+                        if port['port'] in oldPort.values():
+                            print("port exists")
+
+
                         # if port['port'] == oldPort['port'] and port['protocol'] == oldPort['protocol']:
                         #     print("same ports, dont do anything")
                         # else:
