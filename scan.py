@@ -235,9 +235,10 @@ def compare(newDirectory, oldDirectory):
         i += 1
 
     for host in newTreeFinding:
-        if host['host'] in oldTreeFinding.values():
-            for port in host[host['host']]:
-                print(oldTreeFinding[host['host']])
+        for oldHost in oldTreeFinding:
+            if host['host'] in oldHost.values():
+                for port in host[host['host']]:
+                    print(oldHost[host['host']])
 
 
         # for oldHost in oldTreeFinding:
