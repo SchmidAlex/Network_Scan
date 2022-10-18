@@ -235,7 +235,7 @@ def compare(newDirectory, oldDirectory):
 
 
     for host in newTreeFinding:
-        for port in host['host']:
+        for port in host[host['host']]:
             porttwo = port['port']
             protocol = port['protocol']
             print(porttwo + '-' + protocol)
