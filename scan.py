@@ -244,6 +244,7 @@ def compare(newDirectory, oldDirectory):
                     for oldPort in oldHost[foundHost]:
                         if oldPort['port'] == porttwo and oldPort['protocol'] == protocol:
                             print('sch guet')
+                            break
                         else:
                             print('sch ned guet')
                 
