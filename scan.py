@@ -238,7 +238,7 @@ def compare(newDirectory, oldDirectory):
         for oldHost in oldTreeFinding:
             if host['host'] in oldHost.values():
                 for port in host[host['host']]:
-                    if not any(port['port'] for oldPort in oldHost[host['host']]):
+                    if not any(port['port'] and port['protocol'] for oldPort in oldHost[host['host']]):
                         print('port doesnt exist')
                     else:
                         print('port exists')
