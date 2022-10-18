@@ -188,65 +188,62 @@ def compare(newDirectory, oldDirectory):
     run_command(cmd)
 
     newTree = elementTree.parse(newDirectory+"nmap_result_xml.xml")
-    newTreeFinding = []
+    newTreeFinding = {}
 
     oldTree = elementTree.parse(oldDirectory+"nmap_result_xml.xml")
-    oldTreeFinding = []
+    oldTreeFinding = {}
 
-    i = 0
     tempHost = None
 
     newRoot = newTree.getroot()
     for child in newRoot.findall("host"):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
-                newTreeFinding.append({'host': str(host.attrib['addr']), str(host.attrib['addr']): []})
                 tempHost = str(host.attrib['addr'])
         for ports in child.findall('ports'):
             for port in ports.findall('port'):
                 if port.find('state').attrib['state'] == 'open':
-                    newTreeFinding[i][tempHost].append({
+                    newTreeFinding[tempHost] = {
                         'port': str(port.attrib['portid']),
                         'protocol': str(port.attrib['protocol']),
                         'state': str(port.find('state').attrib['state']),
                         'name': str(port.find('service').attrib['name'])
-                    })
-        i += 1
+                    }
 
-    i = 0
     tempHost = None
     
     oldRoot = oldTree.getroot()
     for child in oldRoot.findall("host"):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
-                oldTreeFinding.append({'host': str(host.attrib['addr']), str(host.attrib['addr']): []})
                 tempHost = str(host.attrib['addr'])
         for ports in child.findall('ports'):
             for port in ports.findall('port'):
                 if port.find('state').attrib['state'] == 'open':
-                    oldTreeFinding[i][tempHost].append({
+                    oldTreeFinding[tempHost] = {
                         'port': str(port.attrib['portid']),
                         'protocol': str(port.attrib['protocol']),
                         'state': str(port.find('state').attrib['state']),
                         'name': str(port.find('service').attrib['name'])
-                    })
-        i += 1
+                    }
+
+    print(newTreeFinding)
+    print(oldTreeFinding)
 
 
-    for host in newTreeFinding:
-        for port in host[host['host']]:
-            foundHost = host['host']
-            porttwo = port['port']
-            protocol = port['protocol']
-            for oldHost in oldTreeFinding:
-                if oldHost['host'] == foundHost:
-                    for oldPort in oldHost[foundHost]:
-                        if oldPort['port'] == porttwo and oldPort['protocol'] == protocol:
-                            print('sch guet')
-                            break
-                        else:
-                            print('sch ned guet')
+    # for host in newTreeFinding:
+    #     for port in host[host['host']]:
+    #         foundHost = host['host']
+    #         porttwo = port['port']
+    #         protocol = port['protocol']
+    #         for oldHost in oldTreeFinding:
+    #             if oldHost['host'] == foundHost:
+    #                 for oldPort in oldHost[foundHost]:
+    #                     if oldPort['port'] == porttwo and oldPort['protocol'] == protocol:
+    #                         print('sch guet')
+    #                         break
+    #                     else:
+    #                         print('sch ned guet')
                 
 
 
