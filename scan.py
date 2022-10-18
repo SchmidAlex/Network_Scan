@@ -238,8 +238,14 @@ def compare(newDirectory, oldDirectory):
         for oldHost in oldTreeFinding:
             if host['host'] in oldHost.values():
                 for port in host[host['host']]:
-                    if port['port'] in oldHost[host['host']].value():
-                        print(oldHost[host['host']])
+                    for oldPort in oldHost[host['host']]:
+                        if port['port'] in oldPort['port'].value() and port['protocol'] in oldPort['protocol']:
+                            pass
+                        else:
+                            #write port, protocol and name into the difference file
+                            print('there is a new port')
+            else:
+                print('there is a new host')
 
 
         # for oldHost in oldTreeFinding:
