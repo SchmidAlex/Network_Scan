@@ -200,6 +200,7 @@ def compare(newDirectory, oldDirectory):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
                 tempHost = str(host.attrib['addr'])
+                newTreeFinding[tempHost] = {}
         for ports in child.findall('ports'):
             for port in ports.findall('port'):
                 if port.find('state').attrib['state'] == 'open':
@@ -216,6 +217,7 @@ def compare(newDirectory, oldDirectory):
         for host in child.findall("address"):
             if host.attrib['addrtype'] == 'ipv4':
                 tempHost = str(host.attrib['addr'])
+                oldTreeFinding[tempHost] = {}
         for ports in child.findall('ports'):
             for port in ports.findall('port'):
                 if port.find('state').attrib['state'] == 'open':
