@@ -230,6 +230,7 @@ def compare(newDirectory, oldDirectory):
     for host in newTreeFinding:
         if host in oldTreeFinding:
             print('host found')
+            print(oldTreeFinding[host])
         else:
             print('host new')
 
