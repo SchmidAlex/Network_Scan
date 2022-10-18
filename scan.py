@@ -227,9 +227,8 @@ def compare(newDirectory, oldDirectory):
                         'name': str(port.find('service').attrib['name'])
                     }
 
-    print(newTreeFinding)
-    print(oldTreeFinding)
-
+    for host in newTreeFinding:
+        print(host)
 
     # for host in newTreeFinding:
     #     for port in host[host['host']]:
