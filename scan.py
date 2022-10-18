@@ -239,6 +239,8 @@ def compare(newDirectory, oldDirectory):
             if host['host'] in oldHost.values():
                 for port in host[host['host']]:
                     for oldPort in oldHost[host['host']]:
+                        print(port['port'])
+                        print(oldPort.values())
                         if port['port'] in oldPort.values():
                             if port['protocol'] in oldPort.values():
                                 pass
