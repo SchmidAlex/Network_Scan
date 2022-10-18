@@ -203,10 +203,10 @@ def compare(newDirectory, oldDirectory):
         if host in oldTreeFinding:
             for port in newTreeFinding[host]:
                 if port in oldTreeFinding[host]:
-                    if newTreeFinding[host][port]['protocol'] in oldTreeFinding[host][port]:
-                        print("New Protocol for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name'])
-                    else: 
+                    if newTreeFinding[host][port]['protocol'] == oldTreeFinding[host][port]['protocol']:
                         pass
+                    else: 
+                       print("New Protocol for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name']) 
                 else:
                     print("New Port for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name'])
         else:
@@ -216,10 +216,7 @@ def compare(newDirectory, oldDirectory):
         if host in newTreeFinding:
             for port in oldTreeFinding[host]:
                 if port in newTreeFinding[host]:
-                    print(oldTreeFinding[host][port]['protocol']) # = tcp
-                    print(newTreeFinding[host][port])
-                    print(oldTreeFinding[host][port]['protocol'] in newTreeFinding[host][port])
-                    if oldTreeFinding[host][port]['protocol'] in newTreeFinding[host][port]:
+                    if oldTreeFinding[host][port]['protocol'] == newTreeFinding[host][port]['protocol']:
                         pass
                     else:
                         print("Old Protocol for " + host + " not detected: " + port + "/" + oldTreeFinding[host][port]['protocol'] + " name: " + oldTreeFinding[host][port]['name'])
