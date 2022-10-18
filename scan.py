@@ -232,63 +232,13 @@ def compare(newDirectory, oldDirectory):
             for port in newTreeFinding[host]:
                 if port in oldTreeFinding[host]:
                     if newTreeFinding[host][port]['protocol'] in oldTreeFinding[host][port]:
-                        print("port same, protocol not")
+                        print("New Protocol for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name'])
                     else: 
-                        print("everything the same")
+                        pass
                 else:
-                    print("port is new")
+                    print("New Port for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name'])
         else:
-            print('host new')
-
-    # for host in newTreeFinding:
-    #     for port in host[host['host']]:
-    #         foundHost = host['host']
-    #         porttwo = port['port']
-    #         protocol = port['protocol']
-    #         for oldHost in oldTreeFinding:
-    #             if oldHost['host'] == foundHost:
-    #                 for oldPort in oldHost[foundHost]:
-    #                     if oldPort['port'] == porttwo and oldPort['protocol'] == protocol:
-    #                         print('sch guet')
-    #                         break
-    #                     else:
-    #                         print('sch ned guet')
-                
-
-
-
-    # for host in newTreeFinding:
-    #     for oldHost in oldTreeFinding:
-    #         if host['host'] in oldHost.values():
-    #             for port in host[host['host']]:
-    #                 if not any(port['port'] for oldPort in oldHost[host['host']]):
-    #                     print('port doesnt exist')
-    #                 else:
-    #                     print('port exists')
-
-
-
-    #                 for oldPort in oldHost[host['host']]:
-    #                     #print(port['port'])
-    #                     #print(oldPort.values())
-    #                     if port['port'] in oldPort.values():
-    #                         if port['protocol'] in oldPort.values():
-    #                             pass
-    #                         else:
-    #                             print(' ')
-    #                     else:
-    #                         print(' ')
-    #         else:
-    #             print(' ')
-
-
-        # for oldHost in oldTreeFinding:
-        #     if host['host'] == oldHost['host']:
-        #         # We found the same host in the new scan as in the old
-        #         for port in host[host['host']]:
-        #             for oldPort in oldHost[oldHost['host']]:
-        #                 if port['port'] in oldPort.values():
-        #                     print("port exists")
+            print("New Host detected: " + host + ": " + newTreeFinding[host])
 
 
 
