@@ -210,7 +210,7 @@ def compare(newDirectory, oldDirectory):
                 else:
                     print("New Port for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name'])
         else:
-            print("New Host detected: " + host + ": " + newTreeFinding[host])
+            print("New Host detected: " + host + ": " + str(newTreeFinding[host]))
 
     for host in oldTreeFinding:
         if host in newTreeFinding:
@@ -226,7 +226,7 @@ def compare(newDirectory, oldDirectory):
                 else:
                     print("Old Port for " + host + " not detected: " + port + "/" + oldTreeFinding[host][port]['protocol'] + " name: " + oldTreeFinding[host][port]['name'])
         else:
-            print("Old Host not detected: " + host + ":" + oldTreeFinding[host])
+            print("Old Host not detected: " + host + ":" + str(oldTreeFinding[host]))
 
 
 
