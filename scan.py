@@ -229,11 +229,9 @@ def compare(newDirectory, oldDirectory):
 
     for host in newTreeFinding:
         if host in oldTreeFinding:
-            for port in host:
-                print(oldTreeFinding[host])
-                print(port.items())
+            for port in newTreeFinding[host]:
                 if port in oldTreeFinding[host]:
-                    if not port['protocol'] in oldTreeFinding[host][port]:
+                    if not newTreeFinding[host][port]['protocol'] in oldTreeFinding[host][port]:
                         print("port same, protocol not")
                 else:
                     print("port is new")
