@@ -156,34 +156,6 @@ def getLastScanDirectory(timestamp, name, range):
 
 
 def compare(newDirectory, oldDirectory):
-    # cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
-    # run_command(cmd)
-
-    # diffFile = open(newDirectory+"nmap_result_difference.txt", "at")
-
-    # with open(newDirectory+"nmap_result_tcp.txt", 'r') as newFile:
-    #         newFileText = newFile.readlines()
-    # with open(oldDirectory+"nmap_result_tcp.txt", 'r') as oldFile:
-    #         oldFileText = oldFile.readlines()
-
-    # diff = difflib.unified_diff(
-    #     oldFileText, newFileText, fromfile="file1.txt", tofile="file2.txt", lineterm=''
-    # )
-
-    # for line in diff:
-    #     if line.startswith("-"):
-    #         diffFile.write(line + "\n")
-    #     elif line.startswith("+"):
-    #         diffFile.write(line + "\n")
-    #     else:
-    #         print("not written: " + line + "\n")
-
-    # diffFile.flush()
-    # diffFile.close()
-
-    # The code above works... but it isnt really beatifull, thats why i try it with XML below
-    ##########################################################################################
-
     cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
     run_command(cmd)
 
@@ -239,6 +211,19 @@ def compare(newDirectory, oldDirectory):
                     print("New Port for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name'])
         else:
             print("New Host detected: " + host + ": " + newTreeFinding[host])
+
+    for host in oldTreeFinding:
+        if host in newTreeFinding:
+            for port in oldTreeFinding[host]:
+                if port in newTreeFinding[host]:
+                    if oldTreeFinding[host][port]['protocol'] in newTreeFinding[host][port]:
+                        pass
+                    else:
+                        print("Old Protocol for " + host + " not detected: " + port + "/" + oldTreeFinding[host][port]['protocol'] + " name: " + oldTreeFinding[host][port]['name'])
+                else:
+                    print("Old Port for " + host + " not detected: " + port + "/" + oldTreeFinding[host][port]['protocol'] + " name: " + oldTreeFinding[host][port]['name'])
+        else:
+            print("Old Host not detected: " + host + ":" + oldTreeFinding[host])
 
 
 
