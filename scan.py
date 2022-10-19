@@ -125,7 +125,7 @@ def testssl(newDirectory):
     with open(newDirectory + "nmap_result_fortestssl.txt", "w") as file :
         file.write(filedata)
 
-    cmd = ["sudo", "/testssl/testssl.sh", "--file", newDirectory + "nmap_result_fortestssl.txt", "-oL", newDirectory + "testssl_result.txt"]
+    cmd = ["sudo", "/testssl/testssl.sh", "--file", newDirectory + "nmap_result_fortestssl.txt", "-oH", newDirectory + "testssl_result.html"]
     run_command(cmd)
 
 
@@ -245,7 +245,6 @@ def compare(newDirectory, oldDirectory):
     outfile.close()
 
 
-
 #
 #            MAIN
 #################################################################################
@@ -270,8 +269,7 @@ def main():
 
     ######### ISSUES AND DEBUGGING #########
 
-    # 1. nmap cant resolve its ip's, so it gets interrupted and that also means testssl wont run -> idk yet
-    # 2. testssl stops after testing SMTP ports...
+    # 1. Masscan command isnt correct at all right now... also it doesnt find anything with the --top-ports argument -> fix this
 
     ############ END DEBUGGING ############
 
