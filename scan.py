@@ -210,19 +210,19 @@ def compare(newDirectory, oldDirectory):
                     if newTreeFinding[host][port]['protocol'] == oldTreeFinding[host][port]['protocol']:
                         pass
                     else: 
-                        outfile.write(host + ":\nport\t\twhats new\t\tname\n" + port + "/" + newTreeFinding[host][port]['protocol'] + "\t\tprotocol\t\t\t" + newTreeFinding[host][port]['name'])
+                        outfile.write(host + ":\nport\t\twhats new\t\tname\n" + port + "/" + newTreeFinding[host][port]['protocol'] + "\t\tprotocol\t\t\t" + newTreeFinding[host][port]['name'] + "\n")
                         print("New Protocol for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name']) 
                 else:
-                    outfile.write(host + ":\nport\t\twhats new\t\tname\n" + port + "/" + newTreeFinding[host][port]['protocol'] + "\t\tport\t\t\t" + newTreeFinding[host][port]['name'])
+                    outfile.write(host + ":\nport\t\twhats new\t\tname\n" + port + "/" + newTreeFinding[host][port]['protocol'] + "\t\tport\t\t\t" + newTreeFinding[host][port]['name'] + "\n")
                     print("New Port for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name'])
         else:
             outfile.write("new host detected:")
             outfile.write(host + ":\nport\t\tname\n")
             for newPorts in newTreeFinding[host]:
-                outfile.write(newPorts + "/" + newTreeFinding[host][newPorts]['protocol'] + "\t\t" + newTreeFinding[host][newPorts]['name'])
+                outfile.write(newPorts + "/" + newTreeFinding[host][newPorts]['protocol'] + "\t\t" + newTreeFinding[host][newPorts]['name'] + "\n")
             print("New Host detected: " + host + ": " + str(newTreeFinding[host]))
 
-    outfile.write("Ports and hosts which got detected in the last scan, but not in the new one: \n\n")
+    outfile.write("\nPorts and hosts which got detected in the last scan, but not in the new one: \n\n")
 
     for host in oldTreeFinding:
         if host in newTreeFinding:
@@ -231,16 +231,16 @@ def compare(newDirectory, oldDirectory):
                     if oldTreeFinding[host][port]['protocol'] == newTreeFinding[host][port]['protocol']:
                         pass
                     else:
-                        outfile.write(host + ":\nport\t\twhats new\t\tname\n" + port + "/" + oldTreeFinding[host][port]['protocol'] + "\t\tprotocol\t\t\t" + oldTreeFinding[host][port]['name'])
+                        outfile.write(host + ":\nport\t\twhats missing\t\tname\n" + port + "/" + oldTreeFinding[host][port]['protocol'] + "\t\tprotocol\t\t\t" + oldTreeFinding[host][port]['name'] + "\n")
                         print("Old Protocol for " + host + " not detected: " + port + "/" + oldTreeFinding[host][port]['protocol'] + " name: " + oldTreeFinding[host][port]['name'])
                 else:
-                    outfile.write(host + ":\nport\t\twhats new\t\tname\n" + port + "/" + oldTreeFinding[host][port]['protocol'] + "\t\tport\t\t\t" + oldTreeFinding[host][port]['name'])
+                    outfile.write(host + ":\nport\t\twhats missing\t\tname\n" + port + "/" + oldTreeFinding[host][port]['protocol'] + "\t\tport\t\t\t" + oldTreeFinding[host][port]['name'] + "\n")
                     print("Old Port for " + host + " not detected: " + port + "/" + oldTreeFinding[host][port]['protocol'] + " name: " + oldTreeFinding[host][port]['name'])
         else:
-            outfile.write("old host not detected:")
+            outfile.write("old host not detected:\n")
             outfile.write(host + ":\nport\t\tname\n")
             for oldPorts in oldTreeFinding[host]:
-                outfile.write(oldPorts + "/" + oldTreeFinding[host][oldPorts]['protocol'] + "\t\t" + oldTreeFinding[host][oldPorts]['name'])
+                outfile.write(oldPorts + "/" + oldTreeFinding[host][oldPorts]['protocol'] + "\t\t" + oldTreeFinding[host][oldPorts]['name'] + "\n")
             print("Old Host not detected: " + host + ":" + str(oldTreeFinding[host]))
 
     outfile.flush()
