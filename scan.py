@@ -202,7 +202,6 @@ def compare(newDirectory, oldDirectory):
     outfile = open(newDirectory + "nmap_result_difference.txt", "at")
     outfile.write("New detected Hosts and Ports: \n\n")
 
-#i was here writing the differencefile... it isnt beautifull right now, fix it and write it for not detected things too
     for host in newTreeFinding:
         if host in oldTreeFinding:
             for port in newTreeFinding[host]:
