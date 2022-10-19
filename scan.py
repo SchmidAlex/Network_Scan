@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # Author: Alex
 import argparse
-#import difflib
 import re
 import subprocess
 import sys
@@ -19,12 +18,6 @@ def repoClaim():
     else:
         cmd = ["sudo", "git", "-C", "/Network_Scan", "pull"]
         run_command(cmd)
-
-
-######### check for needed dependencies #########
-def getDependencies():
-    print('TODO: dependenciechecker when needed so just maybe')
-
 
 
 ######### needed to compare differences between the scans #########
@@ -100,20 +93,15 @@ def nmap(ip, tcpPorts, udpPorts, delay, newDirectory):
     cmd = ["sudo", "touch", newDirectory+"nmap_result_fortestssl.txt"]
     cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
 
-    # # Scan top given TCP ports with nmap
-    # cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", ip]
-    # run_command(cmd)
+    #i was working here TODO
 
     # # Scan top given UDP ports with nmap -> it takes ages to run this TODO: uncomment it when testing is done
     # # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", ip]
     # # run_command(cmd)
 
-
-    # the lines above works correct, i commented it out and made a new one for testing xml output
+    # scan the tcp ports with nmap
     cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", "-oX", newDirectory+"nmap_result_xml.xml", ip]
     run_command(cmd)
-
-
 
 
 ######### lets the programm check all ssl connections with the script testssl.sh #########
@@ -131,7 +119,7 @@ def testssl(newDirectory):
     run_command(cmd)
 
 
-def ovaTest(newDirectory):
+def openVasTest(newDirectory):
     #TODO: let OVA test the ip's and output the result into a file
     print("todo")
 
@@ -155,6 +143,7 @@ def getLastScanDirectory(timestamp, name, range):
         return None
 
 
+######### Compares the old scan and the new one and writes the difference into a txt-file #########
 def compare(newDirectory, oldDirectory):
     cmd = ["sudo", "touch", newDirectory + "nmap_result_difference.txt"]
     run_command(cmd)
@@ -283,7 +272,7 @@ def main():
 
     testssl(newDirectory)
 
-    ovaTest(newDirectory)
+    openVasTest(newDirectory)
 
     if oldDirectory:
         compare(newDirectory, oldDirectory)
