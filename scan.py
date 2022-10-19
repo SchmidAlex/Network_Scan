@@ -210,16 +210,16 @@ def compare(newDirectory, oldDirectory):
                     if newTreeFinding[host][port]['protocol'] == oldTreeFinding[host][port]['protocol']:
                         pass
                     else: 
-                        outfile.write(host + ":\nport\twhats new\tname\n" + port + "/" + newTreeFinding[host][port]['protocol'] + "\tprotocol\t" + newTreeFinding[host][port]['name'])
+                        outfile.write(host + ":\nport\t\twhats new\t\tname\n" + port + "/" + newTreeFinding[host][port]['protocol'] + "\t\tprotocol\t\t" + newTreeFinding[host][port]['name'])
                         print("New Protocol for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name']) 
                 else:
-                    outfile.write(host + ":\nport\twhats new\tname\n" + port + "/" + newTreeFinding[host][port]['protocol'] + "\tport\t" + newTreeFinding[host][port]['name'])
+                    outfile.write(host + ":\nport\t\twhats new\t\tname\n" + port + "/" + newTreeFinding[host][port]['protocol'] + "\t\tport\t\t" + newTreeFinding[host][port]['name'])
                     print("New Port for " + host + " detected: " + port + "/" + newTreeFinding[host][port]['protocol'] + " name: " + newTreeFinding[host][port]['name'])
         else:
             outfile.write("new host detected:")
-            outfile.write(host + ":\nport\tname\n")
+            outfile.write(host + ":\nport\t\tname\n")
             for newPorts in newTreeFinding[host]:
-                outfile.write(newPorts + "/" + newTreeFinding[host][newPorts]['protocol'] + "\t" + newTreeFinding[host][newPorts]['name'])
+                outfile.write(newPorts + "/" + newTreeFinding[host][newPorts]['protocol'] + "\t\t" + newTreeFinding[host][newPorts]['name'])
             print("New Host detected: " + host + ": " + str(newTreeFinding[host]))
 
     for host in oldTreeFinding:
