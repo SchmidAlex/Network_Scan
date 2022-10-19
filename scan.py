@@ -72,6 +72,7 @@ def run_command(command):
 
 ######### lets the programm scan with masscan (normal scan) #########
 def masscan(ip, tcpPorts, udpPorts, max_rate, newDirectory):
+    #TODO: repair the masscan normal scan
     print("\nRunning masscan 'normal' scan:")
     cmd = ["sudo", "touch", newDirectory+"masscan_result.txt"]
     run_command(cmd)
@@ -93,15 +94,13 @@ def nmap(ip, tcpPorts, udpPorts, delay, newDirectory):
     cmd = ["sudo", "touch", newDirectory+"nmap_result_fortestssl.txt"]
     cmd = ["sudo", "touch", newDirectory+"nmap_result_udp.txt"]
 
-    #i was working here TODO
-
-    # # Scan top given UDP ports with nmap -> it takes ages to run this TODO: uncomment it when testing is done
-    # # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", ip]
-    # # run_command(cmd)
-
     # scan the tcp ports with nmap
     cmd = ["sudo", "nmap", "-sV", "-Pn", "--top-ports", tcpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_tcp.txt", "-oG", newDirectory+"nmap_result_fortestssl.txt", "-oX", newDirectory+"nmap_result_xml.xml", ip]
     run_command(cmd)
+
+    # # Scan top given UDP ports with nmap -> it takes ages to run this TODO: uncomment it when testing is done
+    # cmd = ["sudo", "nmap", "-sV", "-Pn", "-sU", "--top-ports", udpPorts, "-T", str(delay), "-oN", newDirectory+"nmap_result_udp.txt", "-oX", newDirectory+"nmap_result_xml.xml", ip]
+    # run_command(cmd)
 
 
 ######### lets the programm check all ssl connections with the script testssl.sh #########
@@ -115,7 +114,18 @@ def testssl(newDirectory):
         cmd = ["sudo", "git", "-C", "/testssl", "pull"]
         run_command(cmd)
 
-    cmd = ["sudo", "/testssl/testssl.sh", "--file", newDirectory+"nmap_result_fortestssl.txt", "-oL", newDirectory+"testssl_result.txt"]
+    #I was here working
+
+    with open(newDirectory + "nmap_result_fortestssl.txt", "r") as file :
+        filedata = file.read()
+
+    #Replace the filedata with regex somehow from 25 to , TODO:
+    filedata = re.sub("\s25.*,", "", filedata)
+
+    with open(newDirectory + "nmap_result_fortestssl.txt", "w") as file :
+        file.write(filedata)
+
+    cmd = ["sudo", "/testssl/testssl.sh", "--file", newDirectory + "nmap_result_fortestssl.txt", "-oL", newDirectory + "testssl_result.txt"]
     run_command(cmd)
 
 
