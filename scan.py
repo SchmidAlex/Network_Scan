@@ -217,7 +217,7 @@ def compare(newDirectory, oldDirectory):
             outfile.write("new host detected:")
             outfile.write(host + ":\nport\t\tname\n")
             for newPorts in newTreeFinding[host]:
-                outfile.write(newPorts + "/" + newTreeFinding[host][newPorts]['protocol'] + "\t\t" + newTreeFinding[host][newPorts]['name'] + "\n")
+                outfile.write(newPorts + "/" + newTreeFinding[host][newPorts]['protocol'] + "\t" + newTreeFinding[host][newPorts]['name'] + "\n")
             print("New Host detected: " + host + ": " + str(newTreeFinding[host]))
 
     outfile.write("\nPorts and hosts which got detected in the last scan, but not in the new one: \n\n")
@@ -238,7 +238,7 @@ def compare(newDirectory, oldDirectory):
             outfile.write("old host not detected:\n")
             outfile.write(host + ":\nport\t\tname\n")
             for oldPorts in oldTreeFinding[host]:
-                outfile.write(oldPorts + "/" + oldTreeFinding[host][oldPorts]['protocol'] + "\t\t" + oldTreeFinding[host][oldPorts]['name'] + "\n")
+                outfile.write(oldPorts + "/" + oldTreeFinding[host][oldPorts]['protocol'] + "\t" + oldTreeFinding[host][oldPorts]['name'] + "\n")
             print("Old Host not detected: " + host + ":" + str(oldTreeFinding[host]))
 
     outfile.flush()
