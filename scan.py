@@ -286,6 +286,8 @@ def main():
 
     if oldDirectory:
         compare(newDirectory, oldDirectory)
+
+    print("If you found any SMTP-Services on Port 25, you need to test them extra with testssl!")
         
     
 if __name__ == "__main__":
